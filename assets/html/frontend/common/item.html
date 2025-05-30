@@ -39,19 +39,39 @@
 		<div class="info">
 			<h1><?=$_HTML->Item->title?></h1>
 			<div class="meta">
-			Hersteller: <strong><?=$_HTML->Item->manufacturer?></strong><br>
-			Kategorie: 
-			<a href="category.html?k=smartphones">Smartphones</a> &gt; 
-			<a href="category.html?k=ios">iOS</a>
+				Hersteller: <strong><?=$_HTML->Item->manufacturer?></strong><br>
+				Kategorie: <a href="#"><?=$_HTML->Item->category1?></a> &gt; <a href="#"><?=$_HTML->Item->category2?></a><br>
+				EAN: <?=$_HTML->Item->ean?><br>
+				MPN: <?=$_HTML->Item->mpn?><br>
+				SKU: <?=$_HTML->Item->sku?><br>
+				TARIC: <?=$_HTML->Item->taric?><br>
+				WEEE: <?=$_HTML->Item->sku?><br>
+				Zustand: <?=$_HTML->Item->iscondition?><br>
+				<br>
+				Bestand: <strong><?=$_HTML->Item->stock?></strong> [<?=$_HTML->Item->stocketa?>]
 			</div>
-			<div class="price">€ <?=$_HTML->Item->price?></div>
+			<div class="price">€ <?=$_HTML->Item->price?>,-</div>
 			<div class="description"><?=$_HTML->Item->description?></div>
 			<a href="#" class="btn">🛒 In den Warenkorb</a>
+			<div class="meta">
+				<br>
+				Gewicht: <?=$_HTML->Item->weight?>kg<br>
+				Breite: <?=$_HTML->Item->width?>m<br>
+				Tiefe: <?=$_HTML->Item->depth?>m<br>
+				Höhe: <?=$_HTML->Item->height?>m<br>
+				Volumengewicht: <?=$_HTML->Item->volweight?><br>
+				Versandart: <?=$_HTML->Item->shipping?><br>
+				<br>
+				Indexed: <?=$_HTML->Item->created?>
+			</div>
 		</div>
 		</div>
 	</div>
 <!--
-Array ( [uid] => 015SGWh1XF [status] => 1 [created] => 2025-05-29 21:29:14 [updated] => [title] => Mobilis U.FIX Uni Smartph. Mount 360 rotation arm Motorbike [description] => [manufacturer] => Mobilis [mpn] => 044026 [ean] => 3700992527857 [taric] => 85299030 [unspc] => 0 [eclass] => 0 [weeenr] => 62805472 [tax] => 0 [category1] => Smartphone Zubehör [category2] => 0 [category3] => 0 [category4] => 0 [category5] => 0 [weight] => 0.000 [width] => 0.000 [depth] => 0.000 [height] => 0.000 [volweight] => 0.000 [iseol] => 0 [eoldate] => [minorderqty] => 1 [maxorderqty] => 0 [copyrightcharge] => 0.00 [shipping] => 1 [sku] => 520350 [iscondition] => 0 [availability] => 0 [stock] => 0 [stocketa] => [price] => 24.63 )
+Array ( [uid] => 015SGWh1XF [status] => 1 [created] => 2025-05-29 21:29:14 [updated] => [title] => Mobilis U.FIX Uni Smartph. Mount 360 rotation arm Motorbike [description] => [manufacturer] => Mobilis 
+[mpn] => 044026 [ean] => 3700992527857 [taric] => 85299030 [unspc] => 0 [eclass] => 0 [weeenr] => 62805472 [tax] => 0 [category1] => Smartphone Zubehör [category2] => 0 [category3] => 0 [category4] => 0 [category5] => 0 
+[weight] => 0.000 [width] => 0.000 [depth] => 0.000 [height] => 0.000 [volweight] => 0.000 [iseol] => 0 [eoldate] => [minorderqty] => 1 [maxorderqty] => 0 [copyrightcharge] => 0.00 [shipping] => 1 [sku] => 520350 
+[iscondition] => 0 [availability] => 0 [stock] => 0 [stocketa] => [price] => 24.63 )
 -->
 </body>
 </html>
