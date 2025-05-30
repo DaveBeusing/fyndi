@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+	<script async src="https://www.googletagmanager.com/gtag/js?id=G-V22GRNJ6NK"></script>
+	<script>
+		window.dataLayer = window.dataLayer || [];
+		function gtag(){dataLayer.push(arguments);}
+		gtag('js', new Date());
+		gtag('config', 'G-V22GRNJ6NK');
+	</script>
+	<meta charset="UTF-8">
+	<title><?=$_HTML->Title?> - <?=$_HTML->Item->title?></title>
+	<meta name="description" content="<?=$_HTML->Title?> - <?=$_HTML->Slogan?>">
+	<meta name="robots" content="noindex, nofollow">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" type="text/css" href="assets/css/style.css">
+</head>
+<body>
+	<div class="container">
+		<div class="layout">
+		<div class="gallery">
+			<!-- CSS-only radio inputs -->
+			<input type="radio" name="slide" id="img1" checked>
+			<input type="radio" name="slide" id="img2">
+			<input type="radio" name="slide" id="img3">
+			<!-- Main images -->
+			<div class="gallery-main">
+			<img src="https://placehold.co/800x500?text=Bild1" alt="Bild 1">
+			<img src="https://placehold.co/800x500?text=Bild2" alt="Bild 2">
+			<img src="https://placehold.co/800x500?text=Bild3" alt="Bild 3">
+			</div>
+			<!-- Thumbnail nav -->
+			<div class="gallery-thumbs">
+			<label for="img1"><img src="https://placehold.co/120x90?text=Bild1" alt="Thumb 1"></label>
+			<label for="img2"><img src="https://placehold.co/120x90?text=Bild2" alt="Thumb 2"></label>
+			<label for="img3"><img src="https://placehold.co/120x90?text=Bild3" alt="Thumb 3"></label>
+			</div>
+		</div>
+		<div class="info">
+			<h1><?=$_HTML->Item->title?></h1>
+			<div class="meta">
+			Hersteller: <strong><?=$_HTML->Item->manufacturer?></strong><br>
+			Kategorie: 
+			<a href="category.html?k=smartphones">Smartphones</a> &gt; 
+			<a href="category.html?k=ios">iOS</a>
+			</div>
+			<div class="price">€ <?=$_HTML->Item->price?></div>
+			<div class="description"><?=$_HTML->Item->description?></div>
+			<a href="#" class="btn">🛒 In den Warenkorb</a>
+		</div>
+		</div>
+	</div>
+<!--
+Array ( [uid] => 015SGWh1XF [status] => 1 [created] => 2025-05-29 21:29:14 [updated] => [title] => Mobilis U.FIX Uni Smartph. Mount 360 rotation arm Motorbike [description] => [manufacturer] => Mobilis [mpn] => 044026 [ean] => 3700992527857 [taric] => 85299030 [unspc] => 0 [eclass] => 0 [weeenr] => 62805472 [tax] => 0 [category1] => Smartphone Zubehör [category2] => 0 [category3] => 0 [category4] => 0 [category5] => 0 [weight] => 0.000 [width] => 0.000 [depth] => 0.000 [height] => 0.000 [volweight] => 0.000 [iseol] => 0 [eoldate] => [minorderqty] => 1 [maxorderqty] => 0 [copyrightcharge] => 0.00 [shipping] => 1 [sku] => 520350 [iscondition] => 0 [availability] => 0 [stock] => 0 [stocketa] => [price] => 24.63 )
+-->
+</body>
+</html>

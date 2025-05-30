@@ -26,15 +26,35 @@
 namespace app\utils;
 
 class Utils {
-	/**
-	 * 
-	 */
-	public static function generateUID(){
+
+	public static function generateUID() : string {
 		$chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 		$len = 10;
-		for($i=0, $z=strlen($chars)-1, $s=$chars[rand(0,$z)], $i=1; $i!=$len; $x=rand(0,$z), $s.=$chars[$x], $s=($s[$i]==$s[$i-1]?substr($s,0,-1):$s),$i=strlen($s));
-		return $s;
+		$uid = $chars[random_int(0, strlen($chars) - 1)];
+		while (strlen($uid) < $len) {
+			$nextChar = $chars[random_int(0, strlen($chars) - 1)];
+			if ($nextChar !== $uid[strlen($uid) - 1]) {
+				$uid .= $nextChar;
+			}
+		}
+		return $uid;
 	}
+
+	public static function validateUID( $uid ) : bool {
+		if( strlen( $uid ) !== 10 ){
+			return false;
+		}
+		if( !preg_match( '/^[a-zA-Z0-9]+$/', $uid ) ){
+			return false;
+		}
+		for( $i = 1; $i < strlen( $uid ); $i++ ){
+			if( $uid[$i] === $uid[$i - 1] ){
+				return false;
+			}
+		}
+		return true;
+	}
+
 
 	/*** 
 	 * @source https://stackoverflow.com/a/5249971

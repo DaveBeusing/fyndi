@@ -126,3 +126,127 @@
     .result-item:hover {
       background-color: #e0f2fe;
     }
+
+
+    /* Item */
+        body {
+      font-family: sans-serif;
+      background: #f3f4f6;
+      color: #1f2937;
+      margin: 0;
+      padding: 2rem;
+    }
+
+    a {
+      color: #1e40af;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: auto;
+      background: white;
+      padding: 2rem;
+      border-radius: 1rem;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .layout {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .gallery {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .gallery-main img {
+      width: 100%;
+      max-height: 400px;
+      object-fit: contain;
+      border-radius: 0.5rem;
+    }
+
+    .gallery-thumbs {
+      display: flex;
+      gap: 0.5rem;
+      overflow-x: auto;
+    }
+
+    .gallery-thumbs img {
+      width: 80px;
+      height: 60px;
+      object-fit: cover;
+      border: 2px solid transparent;
+      border-radius: 0.4rem;
+      cursor: pointer;
+      transition: border 0.2s ease;
+    }
+
+    input[name="slide"] {
+      display: none;
+    }
+
+    input[name="slide"]:checked + label img {
+      border-color: #1e40af;
+    }
+
+    .gallery-main img {
+      display: none;
+    }
+
+    #img1:checked ~ .gallery-main img:nth-child(1),
+    #img2:checked ~ .gallery-main img:nth-child(2),
+    #img3:checked ~ .gallery-main img:nth-child(3) {
+      display: block;
+    }
+
+    .info h1 {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .meta {
+      color: #374151;
+      font-size: 0.95rem;
+      margin-bottom: 1rem;
+    }
+
+    .price {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #10b981;
+      margin: 1rem 0;
+    }
+
+    .description {
+      line-height: 1.6;
+      margin-bottom: 1rem;
+    }
+
+    .btn {
+      background: #1e40af;
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      text-decoration: none;
+      display: inline-block;
+      margin-top: 1rem;
+    }
+
+    @media (min-width: 768px) {
+      .layout {
+        flex-direction: row;
+      }
+
+      .gallery, .info {
+        flex: 1;
+      }
+    }

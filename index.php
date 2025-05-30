@@ -41,6 +41,8 @@ use app\config\Config;
 use app\utils\Template;
 use app\database\MySQLPDO;
 
+use app\utils\Utils;
+
 $html = new Template();
 
 switch( filter_input( INPUT_GET, 'view', FILTER_SANITIZE_SPECIAL_CHARS ) ):
@@ -75,6 +77,34 @@ switch( filter_input( INPUT_GET, 'view', FILTER_SANITIZE_SPECIAL_CHARS ) ):
 		header( 'Content-Type: application/json' );
 		echo json_encode( $results, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT );
 		exit;
+	break;
+
+	case 'item':
+		$uid = filter_input( INPUT_GET, 'uid', FILTER_SANITIZE_SPECIAL_CHARS );
+		if( !$uid || !Utils::validateUID( $uid ) ){
+			header( 'HTTP/1.0 404 Not Found' );
+			header( 'Location: '. Config::get()->app->url );
+			exit;
+		}
+		$pdo = new MySQLPDO( Config::get()->db->host, Config::get()->db->database, Config::get()->db->user, Config::get()->db->password, 'utf8mb4' );
+		$stmt = $pdo->prepare( "SELECT * FROM catalog WHERE uid = :uid" );
+		$stmt->bindParam( ':uid', $uid, \PDO::PARAM_STR );
+		$stmt->execute();
+		$result = $stmt->fetch( \PDO::FETCH_ASSOC );
+		$html->view(
+			Config::get()->html->template->path.'item.html',
+			[
+				'Title' => Config::get()->app->name,
+				'Slogan' => Config::get()->app->slogan,
+				'Item' => (object) $result
+			]
+		);
+	break;
+
+	case 'debug':
+		$uid = Utils::generateUID();
+		$isValid = Utils::validateUID( $uid );
+		print "UID: $uid / isValid: $isValid";
 	break;
 
 	default:
