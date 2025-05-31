@@ -54,21 +54,25 @@ switch( filter_input( INPUT_GET, 'view', FILTER_SANITIZE_SPECIAL_CHARS ) ):
 			exit;
 		}
 		$pdo = new MySQLPDO( Config::get()->db->host, Config::get()->db->database, Config::get()->db->user, Config::get()->db->password, 'utf8mb4' );
+		$pdo->setAttribute( \PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION );
 		$stmt = $pdo->prepare("
 			SELECT *,
-				(
-					( MATCH( title ) AGAINST( :query IN NATURAL LANGUAGE MODE ) ) * 6 +
-					( MATCH( sku ) AGAINST( :query IN NATURAL LANGUAGE MODE ) ) * 9 +
-					( MATCH( mpn) AGAINST( :query IN NATURAL LANGUAGE MODE ) ) * 8 +
-					( MATCH( ean) AGAINST( :query IN NATURAL LANGUAGE MODE ) ) * 8 +
-					( MATCH( manufacturer ) AGAINST( :query IN NATURAL LANGUAGE MODE ) ) * 20 +
-					( MATCH( description ) AGAINST( :query IN NATURAL LANGUAGE MODE ) ) * 2 +
-					( MATCH( category1, category2, category3, category4, category5 ) AGAINST( :query IN NATURAL LANGUAGE MODE ) ) * 3
+				ROUND(
+					(
+						( MATCH( title ) AGAINST( :query IN NATURAL LANGUAGE MODE ) ) * 6 +
+						( MATCH( sku ) AGAINST( :query IN NATURAL LANGUAGE MODE ) ) * 8 +
+						( MATCH( mpn ) AGAINST( :query IN NATURAL LANGUAGE MODE ) ) * 8 +
+						( MATCH( ean ) AGAINST( :query IN NATURAL LANGUAGE MODE ) ) * 8 +
+						( MATCH( manufacturer ) AGAINST( :query IN NATURAL LANGUAGE MODE ) ) * 20 +
+						-- ( MATCH( description) AGAINST( :query IN NATURAL LANGUAGE MODE ) ) * 2 +
+						( MATCH( category1, category2, category3, category4, category5 ) AGAINST( :query IN NATURAL LANGUAGE MODE ) ) * 3
+					), 2
 				) AS score
-			FROM catalog
+				FROM catalog
 				WHERE MATCH( title, description, manufacturer, mpn, ean, category1, category2, category3, category4, category5, sku )
 					AGAINST( :query IN NATURAL LANGUAGE MODE )
-			ORDER BY score DESC LIMIT 10;
+				ORDER BY score DESC
+				LIMIT 10;
 		");
 		$stmt->bindParam( ':query', $query, \PDO::PARAM_STR );
 		$stmt->execute();
@@ -87,6 +91,7 @@ switch( filter_input( INPUT_GET, 'view', FILTER_SANITIZE_SPECIAL_CHARS ) ):
 			exit;
 		}
 		$pdo = new MySQLPDO( Config::get()->db->host, Config::get()->db->database, Config::get()->db->user, Config::get()->db->password, 'utf8mb4' );
+		$pdo->setAttribute( \PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION );
 		$stmt = $pdo->prepare( "SELECT * FROM catalog WHERE uid = :uid" );
 		$stmt->bindParam( ':uid', $uid, \PDO::PARAM_STR );
 		$stmt->execute();
