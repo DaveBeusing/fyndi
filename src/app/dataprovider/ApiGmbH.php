@@ -279,5 +279,52 @@ class ApiGmbH {
 		return $input;
 	}
 
+	public static function convertCondition( int $condition ) : string {
+		switch( $condition ):
+			case 0:
+				$cond = 'Neuware';
+			break;
+			case 1:
+				$cond = 'Refurbished';
+			break;
+			default:
+				$cond = 'Unbekannt';
+		endswitch;
+		return $cond;
+	}
+
+	public static function convertAvailability( int $availability ) : string {
+		switch( $availability ):
+			case 0:
+				$avail = 'Kein Bestand';
+			break;
+			case 1:
+				$avail = 'Bestand';
+			break;
+			case 2:
+				$avail = 'im Zulauf';
+			break;
+			default:
+				$avail = 'Unbekannt';
+		endswitch;
+		return $avail;
+	}
+
+	public static function convertShipping( int $shipping ) : string {
+		switch( $shipping ):
+			case 1:
+				$type = 'Paketversand';
+			break;
+			case 2:
+				$type = 'Sperrgut';
+			break;
+			case 3:
+				$type = 'Palettenversand';
+			break;
+			default:
+				$type = 'Unbekannt';
+		endswitch;
+		return $type;
+	}
 }
 ?>

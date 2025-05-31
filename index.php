@@ -40,6 +40,7 @@ require_once 'src/autoload.php';
 use app\config\Config;
 use app\utils\Template;
 use app\database\MySQLPDO;
+use app\dataprovider\ApiGmbH;
 
 use app\utils\Utils;
 
@@ -96,6 +97,13 @@ switch( filter_input( INPUT_GET, 'view', FILTER_SANITIZE_SPECIAL_CHARS ) ):
 		$stmt->bindParam( ':uid', $uid, \PDO::PARAM_STR );
 		$stmt->execute();
 		$result = $stmt->fetch( \PDO::FETCH_ASSOC );
+		if( $result === false ){
+			echo "Kein Eintrag mit UID $uid gefunden.";
+			exit;
+		}
+		$result['iscondition'] = ApiGmbH::convertCondition( $result['iscondition'] );
+		$result['availability'] = ApiGmbH::convertAvailability( $result['availability'] );
+		$result['shipping'] = ApiGmbH::convertShipping( $result['shipping'] );
 		$html->view(
 			Config::get()->html->template->path.'item.html',
 			[
