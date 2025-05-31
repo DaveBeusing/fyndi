@@ -2,6 +2,27 @@ SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
 
+
+
+CREATE TABLE gpsr (
+  uid varchar(64) NOT NULL,
+  status int(1) DEFAULT NULL,
+  brand VARCHAR(255) DEFAULT NULL,
+  company VARCHAR(255) DEFAULT NULL,
+  street VARCHAR(255) DEFAULT NULL,
+  country VARCHAR(100) DEFAULT NULL,
+  city VARCHAR(100) DEFAULT NULL,
+  homepage VARCHAR(255) DEFAULT NULL,
+  support_url VARCHAR(255) DEFAULT NULL,
+  support_email VARCHAR(255) DEFAULT NULL,
+  support_hotline VARCHAR(100) DEFAULT NULL,
+  note VARCHAR(255) DEFAULT NULL,
+  created datetime DEFAULT NULL,
+  updated datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+
 CREATE TABLE `catalog` (
   `uid` varchar(64) NOT NULL,
   `status` int(11) DEFAULT NULL,

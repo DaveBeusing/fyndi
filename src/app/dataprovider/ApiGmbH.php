@@ -32,7 +32,9 @@ use app\dataprovider\Crawler;
 use app\database\MySQLPDO;
 
 class ApiGmbH {
+
 	public function __construct( ){ }
+
 	public static function getPricelist(){
 		$crawler = new Crawler(
 			array(
@@ -41,11 +43,26 @@ class ApiGmbH {
 				CURLOPT_COOKIEJAR => 'data/crawler.cookie'
 			)
 		);
-		$source = 'https://pricelist.api.de/pricelist/?cid='.Config::Dataprovider_User.'&cpw='.Config::Dataprovider_Password.'&shop=API&action=FULL&attachmentFilename=pricelist.csv&opt[]=CLEANUP_PRODUCT_TITLE&opt[]=ADD_DESCRIPTION&opt[]=ADD_CANCEL_DATE&opt[]=ADD_EXPECTED_%20STOCK&opt[]=ADD_REFURBISHED&opt[]=SPEAKING_%20AVAILABILITY_TAGS&opt[]=SHOW_SHIPPING_TYPE&addMap=cancelDate;nextExpectedStockDate;articleType;availability;typeOfShipping;cancelDate;copyrightCharge;deliveryTime;description;isEol;itemGroup;maxOrderQty;minOrderQty;nextExpectedStockDate;shippingCost;status;taxCode;volumetricWeight;weeenr';
+		$source = 'https://pricelist.api.de/pricelist/?cid='.Config::get()->dataprovider->user.'&cpw='.Config::get()->dataprovider->password.'&shop=API&action=FULL&attachmentFilename=pricelist.csv&opt[]=CLEANUP_PRODUCT_TITLE&opt[]=ADD_DESCRIPTION&opt[]=ADD_CANCEL_DATE&opt[]=ADD_EXPECTED_%20STOCK&opt[]=ADD_REFURBISHED&opt[]=SPEAKING_%20AVAILABILITY_TAGS&opt[]=SHOW_SHIPPING_TYPE&addMap=cancelDate;nextExpectedStockDate;articleType;availability;typeOfShipping;cancelDate;copyrightCharge;deliveryTime;description;isEol;itemGroup;maxOrderQty;minOrderQty;nextExpectedStockDate;shippingCost;status;taxCode;volumetricWeight;weeenr';
 		$crawler->add( $source );
 		$data = $crawler->run()[0];//['data'];
-		file_put_contents( Config::Dataprovider_Pricelist, $data['data'] );
-		print 'done';
+		file_put_contents( Config::get()->dataprovider->pricelist, $data['data'] );
+		print 'api GmbH Pricelist import done';
+	}
+
+	public static function getGPSR(){
+		$crawler = new Crawler(
+			array(
+				CURLOPT_USERAGENT => 'Mozilla/5.0 (X11; Linux x86_64; rv:32.0) Gecko/20100101 Firefox/32.0',
+				CURLOPT_COOKIEFILE => 'data/crawler.cookie',
+				CURLOPT_COOKIEJAR => 'data/crawler.cookie'
+			)
+		);
+		$source = 'https://shop.api.de/export/productSafety';
+		$crawler->add( $source );
+		$data = $crawler->run()[0];//['data'];
+		file_put_contents( Config::get()->dataprovider->gpsr, $data['data'] );
+		print 'api GmbH GPSR Data import done';
 	}
 
 	public static function processPricelist(){
@@ -205,6 +222,58 @@ class ApiGmbH {
 		$logger->end();
 		print "<br> import of $i rows";
 	}
+
+	# General Product Safety Regulation – GPSR
+	public static function processGPSR(){
+		$logger = new ImportLogger( Config::get()->dataprovider->logfile );
+		$logger->start( 'GPSR-Import' );
+		$sql = new MySQLPDO( Config::get()->db->host, Config::get()->db->database, Config::get()->db->user, Config::get()->db->password, 'utf8mb4' );
+		$date = date( 'Y-m-d H:i:s' );
+		$handle = fopen( Config::get()->dataprovider->gpsr, 'r' );
+		$i = 0;
+		$header = array();
+		$items = array();
+		while( ( $line = fgets( $handle ) ) !== false ){
+			//if($i === 5) break;
+			$line = trim( $line );
+			$item = explode( ';', $line );
+			if( $i === 0 ){
+				$header = $item;
+			}
+			else {
+				$stmt = $sql->prepare( 'INSERT INTO gpsr ( uid, status, brand, company, street, country, city, homepage, support_url, support_email, support_hotline, note, created, updated ) 
+				VALUES ( :uid, :status, :brand, :company, :street, :country, :city, :homepage, :support_url, :support_email, :support_hotline, :note, :created, :updated )' 
+				);
+				$uid = Utils::generateUID();
+				$isTrue = 1;
+				$isFalse = 0;
+				$updated = null;
+				$brand = null;
+				$note = null;
+				$stmt->bindParam( ':uid', $uid, \PDO::PARAM_STR );
+				$stmt->bindParam( ':status', $isTrue, \PDO::PARAM_INT );
+				$stmt->bindParam( ':brand', $brand, \PDO::PARAM_STR );
+				$stmt->bindParam( ':company', $item[1], \PDO::PARAM_STR );
+				$stmt->bindParam( ':street', $item[2], \PDO::PARAM_STR );
+				$stmt->bindParam( ':country', $item[3], \PDO::PARAM_STR );
+				$stmt->bindParam( ':city', $item[4], \PDO::PARAM_STR );
+				$stmt->bindParam( ':homepage', $item[5], \PDO::PARAM_STR );
+				$stmt->bindParam( ':support_url', $item[6], \PDO::PARAM_STR );
+				$stmt->bindParam( ':support_email', $item[7], \PDO::PARAM_STR );
+				$stmt->bindParam( ':support_hotline', $item[8], \PDO::PARAM_STR );
+				$stmt->bindParam( ':note', $note, \PDO::PARAM_STR );
+				$stmt->bindParam( ':created', $date, \PDO::PARAM_STR );
+				$stmt->bindParam( ':updated', $updated, \PDO::PARAM_STR );
+				$stmt->execute();
+			}
+			$i++;
+			$logger->incrementRow();
+		}
+		fclose( $handle );
+		$logger->end();
+		print "<br> import of $i rows";
+	}
+
 
 	private static function getShippingType( $data ){
 		switch( $data ):
