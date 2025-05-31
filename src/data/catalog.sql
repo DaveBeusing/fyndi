@@ -24,13 +24,14 @@ CREATE TABLE gpsr (
 
 
 CREATE TABLE `catalog` (
-  `uid` varchar(64) NOT NULL PRIMARY KEY,
+  `uid` varchar(10) NOT NULL PRIMARY KEY,
   `status` int(11) DEFAULT NULL,
   `created` datetime DEFAULT NULL,
   `updated` datetime DEFAULT NULL,
   `title` text DEFAULT NULL,
   `description` text DEFAULT NULL,
   `manufacturer` text DEFAULT NULL,
+  `gpsr` varchar(10) DEFAULT NULL,
   `mpn` varchar(64) DEFAULT NULL,
   `ean` varchar(64) DEFAULT NULL,
   `taric` varchar(10) DEFAULT NULL,

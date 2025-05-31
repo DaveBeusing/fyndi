@@ -90,7 +90,8 @@ class ApiGmbH {
 					updated, 
 					title, 
 					description, 
-					manufacturer, 
+					manufacturer,
+					gprs, 
 					mpn, 
 					ean, 
 					taric,
@@ -127,7 +128,8 @@ class ApiGmbH {
 					:updated, 
 					:title, 
 					:description, 
-					:manufacturer, 
+					:manufacturer,
+					:gpsr,
 					:mpn, 
 					:ean, 
 					:taric,
@@ -184,6 +186,7 @@ class ApiGmbH {
 				$stmt->bindParam( ':title', $title, \PDO::PARAM_STR );
 				$stmt->bindParam( ':description', $description, \PDO::PARAM_STR );
 				$stmt->bindParam( ':manufacturer', $manufacturer, \PDO::PARAM_STR );
+				$stmt->bindParam( ':gpsr', $isFalse, \PDO::PARAM_STR );
 				$stmt->bindParam( ':mpn', $mpn, \PDO::PARAM_STR );
 				$stmt->bindParam( ':ean', $item[7], \PDO::PARAM_STR );
 				$stmt->bindParam( ':taric', $taric, \PDO::PARAM_INT );
