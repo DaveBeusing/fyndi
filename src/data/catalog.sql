@@ -5,7 +5,7 @@ SET time_zone = "+00:00";
 
 
 CREATE TABLE gpsr (
-  uid varchar(64) NOT NULL,
+  uid varchar(64) NOT NULL PRIMARY KEY,
   status int(1) DEFAULT NULL,
   brand VARCHAR(255) DEFAULT NULL,
   company VARCHAR(255) DEFAULT NULL,
@@ -24,7 +24,7 @@ CREATE TABLE gpsr (
 
 
 CREATE TABLE `catalog` (
-  `uid` varchar(64) NOT NULL,
+  `uid` varchar(64) NOT NULL PRIMARY KEY,
   `status` int(11) DEFAULT NULL,
   `created` datetime DEFAULT NULL,
   `updated` datetime DEFAULT NULL,

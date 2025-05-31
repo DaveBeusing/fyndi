@@ -118,6 +118,8 @@ switch( filter_input( INPUT_GET, 'view', FILTER_SANITIZE_SPECIAL_CHARS ) ):
 		$uid = Utils::generateUID();
 		$isValid = Utils::validateUID( $uid );
 		print "UID: $uid / isValid: $isValid";
+
+		//ApiGmbH::processGPSR();
 	break;
 
 	default:
