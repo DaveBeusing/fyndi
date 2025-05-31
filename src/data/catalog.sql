@@ -52,3 +52,31 @@ ALTER TABLE `catalog` ADD FULLTEXT KEY `ft_ean` (`ean`);
 ALTER TABLE `catalog` ADD FULLTEXT KEY `ft_categories` (`category1`,`category2`,`category3`,`category4`,`category5`);
 ALTER TABLE `catalog` ADD FULLTEXT KEY `ft_sku` (`sku`);
 COMMIT;
+
+----
+-- Refresh Indizes
+----
+-- bestehende Indizes löschen
+ALTER TABLE catalog DROP INDEX ft_all;
+ALTER TABLE catalog DROP INDEX ft_title;
+ALTER TABLE catalog DROP INDEX ft_description;
+ALTER TABLE catalog DROP INDEX ft_manufacturer;
+ALTER TABLE catalog DROP INDEX ft_mpn;
+ALTER TABLE catalog DROP INDEX ft_ean;
+ALTER TABLE catalog DROP INDEX ft_categories;
+ALTER TABLE catalog DROP INDEX ft_sku;
+
+-- Hauptindex (kombiniert)
+ALTER TABLE catalog ADD FULLTEXT ft_all ( title, description, manufacturer, mpn, ean, category1, category2, category3, category4, category5, sku );
+
+-- Einzelindizes (Gewichtung)
+ALTER TABLE catalog ADD FULLTEXT ft_title (title);
+ALTER TABLE catalog ADD FULLTEXT ft_description (description);
+ALTER TABLE catalog ADD FULLTEXT ft_manufacturer (manufacturer);
+ALTER TABLE catalog ADD FULLTEXT ft_mpn (mpn);
+ALTER TABLE catalog ADD FULLTEXT ft_ean (ean);
+ALTER TABLE catalog ADD FULLTEXT ft_categories ( category1, category2, category3, category4, category5 );
+ALTER TABLE catalog ADD FULLTEXT ft_sku (sku);
+
+-- Optimierung (optional)
+ANALYZE TABLE catalog;
