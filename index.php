@@ -101,6 +101,33 @@ switch( filter_input( INPUT_GET, 'view', FILTER_SANITIZE_SPECIAL_CHARS ) ):
 			echo "Kein Eintrag mit UID $uid gefunden.";
 			exit;
 		}
+		$gpsr_dummy = array(
+			'brand' => '',
+			'company' => '',
+			'street' => '',
+			'country' => '',
+			'city' => '',
+			'homepage' => '',
+			'support_url' => '',
+			'support_email' => '',
+			'support_hotline' => ''
+		);
+		$gpsr = false;
+		if( $result['gpsr'] != null ){
+			$gpsr_uid = $result['gpsr'];
+			$stmt = $pdo->prepare( "SELECT * FROM gpsr WHERE uid = :uid" );
+			$stmt->bindParam( ':uid', $gpsr_uid, \PDO::PARAM_STR );
+			$stmt->execute();
+			$gpsr = $stmt->fetch( \PDO::FETCH_ASSOC );
+			if( $gpsr === false ){
+				$gpsr = $gpsr_dummy;
+			}
+			else {
+				$gpsr = $gpsr;
+			}
+			$result['gpsr'] = (object) $gpsr;
+		}
+		$result['gpsr'] = ( $gpsr === false ) ? (object) $gpsr_dummy : (object) $gpsr;
 		$result['iscondition'] = ApiGmbH::convertCondition( $result['iscondition'] );
 		$result['availability'] = ApiGmbH::convertAvailability( $result['availability'] );
 		$result['shipping'] = ApiGmbH::convertShipping( $result['shipping'] );

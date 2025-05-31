@@ -69,6 +69,7 @@ export default class fyndi {
 						<strong>${this.highlight( item.title, query )}</strong><br>
 						Hersteller: ${this.highlight( item.manufacturer, query )}<br>
 						SKU: ${this.highlight( item.sku, query )}<br>
+						UID: ${item.uid}<br>
 						Score: ${item.score}
 					`;
 					this.elements.search_results.appendChild( div );

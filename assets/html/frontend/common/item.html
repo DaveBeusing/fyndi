@@ -25,15 +25,25 @@
 			<input type="radio" name="slide" id="img3">
 			<!-- Main images -->
 			<div class="gallery-main">
-			<img src="https://placehold.co/800x500?text=Bild1" alt="Bild 1">
-			<img src="https://placehold.co/800x500?text=Bild2" alt="Bild 2">
-			<img src="https://placehold.co/800x500?text=Bild3" alt="Bild 3">
+				<img src="https://placehold.co/800x500?text=Bild1" alt="Bild 1">
+				<img src="https://placehold.co/800x500?text=Bild2" alt="Bild 2">
+				<img src="https://placehold.co/800x500?text=Bild3" alt="Bild 3">
 			</div>
 			<!-- Thumbnail nav -->
 			<div class="gallery-thumbs">
-			<label for="img1"><img src="https://placehold.co/120x90?text=Bild1" alt="Thumb 1"></label>
-			<label for="img2"><img src="https://placehold.co/120x90?text=Bild2" alt="Thumb 2"></label>
-			<label for="img3"><img src="https://placehold.co/120x90?text=Bild3" alt="Thumb 3"></label>
+				<label for="img1"><img src="https://placehold.co/120x90?text=Bild1" alt="Thumb 1"></label>
+				<label for="img2"><img src="https://placehold.co/120x90?text=Bild2" alt="Thumb 2"></label>
+				<label for="img3"><img src="https://placehold.co/120x90?text=Bild3" alt="Thumb 3"></label>
+			</div>
+			<div clas="meta">
+				<b>General Product Safety Regulation – GPSR</b><br><br>
+				<?=$_HTML->Item->gpsr->brand?><br>
+				<?=$_HTML->Item->gpsr->company?><br>
+				<?=$_HTML->Item->gpsr->country?> <?=$_HTML->Item->gpsr->city?> <?=$_HTML->Item->gpsr->street?><br>
+				<a href="<?=$_HTML->Item->gpsr->homepage?>" target="_blank"><?=$_HTML->Item->gpsr->homepage?></a><br>
+				<a href="<?=$_HTML->Item->gpsr->support_url?>" target="_blank"><?=$_HTML->Item->gpsr->support_url?></a><br>
+				<?=$_HTML->Item->gpsr->support_email?><br>
+				<?=$_HTML->Item->gpsr->support_hotline?>
 			</div>
 		</div>
 		<div class="info">
@@ -46,6 +56,7 @@
 				SKU: <?=$_HTML->Item->sku?><br>
 				TARIC: <?=$_HTML->Item->taric?><br>
 				WEEE: <?=$_HTML->Item->sku?><br>
+				UID: <?=$_HTML->Item->uid?><br>
 				Zustand: <?=$_HTML->Item->iscondition?><br>
 				<br>
 				Bestand: <strong><?=$_HTML->Item->stock?></strong> [ <?=$_HTML->Item->availability?> <?=$_HTML->Item->stocketa?>]

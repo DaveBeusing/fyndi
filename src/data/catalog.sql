@@ -21,7 +21,7 @@ CREATE TABLE gpsr (
   updated datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-
+UPDATE catalog SET gpsr = '' WHERE manufacturer = '';
 
 CREATE TABLE `catalog` (
   `uid` varchar(10) NOT NULL PRIMARY KEY,
