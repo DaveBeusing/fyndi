@@ -13,7 +13,7 @@
 	<meta name="description" content="<?=$_HTML->Title?> - <?=$_HTML->Slogan?>">
 	<meta name="robots" content="noindex, nofollow">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="stylesheet" type="text/css" href="assets/css/style.css">
+	<link rel="stylesheet" type="text/css" href="assets/css/item.css">
 </head>
 <body>
 	<div class="container">
@@ -62,9 +62,9 @@
 				Bestand: <strong><?=$_HTML->Item->stock?></strong> [ <?=$_HTML->Item->availability?> <?=$_HTML->Item->stocketa?>]
 			</div>
 			<div class="price-box">
-				<div class="net-price"><span class="currency">€</span><?=$_HTML->Item->price?></div>
+				<div class="net-price" itemprop="net-price" data-cents="<?=(explode('.', $_HTML->Item->price)[1])?>" content="<?=$_HTML->Item->price?>"><span class="currency">€</span> <?=(explode('.', $_HTML->Item->price)[0])?>,</div>
 				<div class="label">zzgl. MwSt. / Stück</div>
-				<div class="gross-price"><?=(round($_HTML->Item->price*1.19, 2))?> €</div>
+				<div class="gross-price"><?=(str_replace('.',',',round($_HTML->Item->price*1.19, 2)))?> € Brutto</div>
 			</div>
 			<div class="description"><?=$_HTML->Item->description?></div>
 			<a href="#" class="btn">🛒 In den Warenkorb</a>
