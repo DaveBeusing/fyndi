@@ -93,7 +93,48 @@
     }
 
 
-       .toggle-switch {
+    .search-buttons button {
+  background: var(--accent);
+  border: none;
+  color: white;
+  padding: 6px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.2s ease, transform 0.2s ease, opacity 0.3s ease, visibility 0.3s ease;
+  transform: scale(1);
+  opacity: 1;
+  visibility: visible;
+}
+
+.search-buttons button:hover {
+  background: #217dbb;
+  transform: scale(1.08);
+}
+
+
+
+ .search-buttons button#search-clear {
+  opacity: 0;
+  visibility: hidden;
+  transform: scale(0.95);
+  transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.2s ease, background 0.2s ease;
+  background: var(--accent);
+}
+
+.search-buttons button#search-clear.visible {
+  opacity: 1;
+  visibility: visible;
+  transform: scale(1);
+}
+
+.search-buttons button#search-clear:hover {
+  background: #217dbb;
+  transform: scale(1.08);
+}
+
+
+    .toggle-switch {
       position: relative;
       display: inline-block;
       width: 46px;

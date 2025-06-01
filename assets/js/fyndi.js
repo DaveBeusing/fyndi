@@ -47,6 +47,13 @@ export default class fyndi {
 		const regex = new RegExp( `(${escaped})`, 'gi' );
 		return str.replace( regex, '<mark>$1</mark>' );
 	}
+	toggleClearButtonVisibility() {
+		if( this.elements.search_input.value.trim() ){
+			this.elements.search_clear.classList.add( "visible" );
+		} else {
+			this.elements.search_clear.classList.remove( "visible" );
+		}
+	}
 	renderSearchResults( items, query ){
 		this.elements.search_results.innerHTML = "";
 		items.forEach( ( item, index ) => {
@@ -97,14 +104,19 @@ export default class fyndi {
 	}
 	run(){
 
-		if( this.debounce.active ){
-			this.elements.search_input.addEventListener( 'input', () => {
+		this.elements.search_input.addEventListener( 'input', () => {
+			this.toggleClearButtonVisibility();
+			if( this.debounce.active ){
 				clearTimeout( this.debounce.timer );
 				this.debounce.timer = setTimeout( () => {
 					this.fetchResults();
 				}, this.debounce.delay );
-			});
-		}
+			}
+			else {
+				this.fetchResults();
+			}
+		});
+
 
 		this.elements.highlight_toggle.addEventListener( 'change', () => {
 			this.elements.search_input.classList.toggle( "highlighted", this.elements.highlight_toggle.checked );
@@ -116,9 +128,10 @@ export default class fyndi {
 
 		this.elements.search_clear.addEventListener( 'click', () => {
 			this.elements.search_input.value = '';
-			this.elements.search_input.focus();
 			this.elements.search_results.innerHTML = '';
+			this.toggleClearButtonVisibility();
 		});
 
+		this.toggleClearButtonVisibility();
 	}
 }
