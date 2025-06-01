@@ -30,6 +30,7 @@
       --card-bg: #ffffff;
       --text: #2d2d2d;
       --muted: #6c757d;
+      --highlight: #6b1ba0;
     }
 
     * {
@@ -180,9 +181,11 @@
     }
 
     .highlighted {
-      box-shadow: 0 0 0 3px var(--highlight) !important;
+      box-shadow: 0 0 0 2px var(--highlight) !important;
+      
     }
 
+    
 
 
 
@@ -202,6 +205,7 @@
       transform: translateY(20px);
       opacity: 0;
       animation: fadeInUp 0.4s ease forwards;
+      cursor: pointer;
     }
 
     @keyframes fadeInUp {
