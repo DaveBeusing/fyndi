@@ -25,11 +25,13 @@ export default class fyndi {
 	constructor( debug=false ){
 		this.debug = debug;
 		this.api = 'index.php?view=api&query=';
+		this.isHighighting = !this.isHighighting || true;
 		this.elements = {
-			search_form : this.$( '#search-form' ),
+			search_button : this.$( '#search-button' ),
 			search_input : this.$( '#search-input' ),
 			search_results : this.$( '#search-results' ),
 			search_clear : this.$( '#search-clear' ),
+			highlight_toggle : this.$( '#highlight-toggle')
 		};
 		this.debounce = {
 			'active' : true,
@@ -44,6 +46,29 @@ export default class fyndi {
 		const escaped = term.replace( /[.*+?^${}()|[\]\\]/g, '\\$&' );
 		const regex = new RegExp( `(${escaped})`, 'gi' );
 		return str.replace( regex, '<mark>$1</mark>' );
+	}
+	renderSearchResults( items, query ){
+		this.elements.search_results.innerHTML = "";
+		items.forEach( ( item, index ) => {
+			const card = document.createElement( "div" );
+			card.className = "card";
+			card.style.animationDelay = `${index * 0.1}s`;
+			card.title = "Produktseite in neuem Tab öffnen";
+			card.onclick = () => {
+					window.open( `https://bsng.eu/app/fyndi/?view=item&uid=${item.uid}`, '_blank');
+			};
+			card.innerHTML = `
+			<svg class="external-link-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14 3h7v7h-2V6.41l-9.29 9.3-1.42-1.42 9.3-9.29H14V3z"/><path d="M5 5h4V3H5c-1.1 0-2 .9-2 2v4h2V5zm14 14h-4v2h4c1.1 0 2-.9 2-2v-4h-2v4zM5 19v-4H3v4c0 1.1.9 2 2 2h4v-2H5z"/></svg>
+			<div class="card-content">
+				<h2>${this.highlight( item.title, query )}</h2>
+				<p>Hersteller: ${this.highlight( item.manufacturer, query )}</p>
+				<p>SKU: ${this.highlight( item.sku, query )} UID: ${item.uid}</p>
+				<p>${item.price}€ / Bestand: ${item.stock}</p>
+				<p>Score: ${item.score}</p>
+			</div>
+			`;
+			this.elements.search_results.appendChild( card );
+		});
 	}
 	fetchResults(){
 		const query = this.elements.search_input.value.trim();
@@ -62,18 +87,9 @@ export default class fyndi {
 					this.elements.search_results.innerHTML = '<div class="result-item">Keine Ergebnisse gefunden.</div>';
 					return;
 				}
-				data.forEach( item => {
-					const div = document.createElement( 'div' );
-					div.className = 'result-item';
-					div.innerHTML = `
-						<strong>${this.highlight( item.title, query )}</strong><br>
-						Hersteller: ${this.highlight( item.manufacturer, query )}<br>
-						SKU: ${this.highlight( item.sku, query )}<br>
-						UID: ${item.uid}<br>
-						Score: ${item.score}
-					`;
-					this.elements.search_results.appendChild( div );
-				});
+				else {
+					this.renderSearchResults( data, query );
+				}
 			})
 			.catch( error => {
 				this.elements.search_results.innerHTML = `<div class="result-item">❌ Error: ${error.message}</div>`;
@@ -90,8 +106,11 @@ export default class fyndi {
 			});
 		}
 
-		this.elements.search_form.addEventListener( 'submit', event => {
-			event.preventDefault();
+		this.elements.highlight_toggle.addEventListener( 'change', () => {
+			this.elements.search_input.classList.toggle( "highlighted", this.elements.highlight_toggle.checked );
+		});
+
+		this.elements.search_button.addEventListener( 'click', () => {
 			this.fetchResults();
 		});
 

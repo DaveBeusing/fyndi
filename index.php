@@ -73,7 +73,7 @@ switch( filter_input( INPUT_GET, 'view', FILTER_SANITIZE_SPECIAL_CHARS ) ):
 				WHERE MATCH( title, description, manufacturer, mpn, ean, category1, category2, category3, category4, category5, sku )
 					AGAINST( :query IN NATURAL LANGUAGE MODE )
 				ORDER BY score DESC
-				LIMIT 10;
+				LIMIT 16;
 		");
 		$stmt->bindParam( ':query', $query, \PDO::PARAM_STR );
 		$stmt->execute();
@@ -151,7 +151,7 @@ switch( filter_input( INPUT_GET, 'view', FILTER_SANITIZE_SPECIAL_CHARS ) ):
 
 	default:
 		$html->view(
-			Config::get()->html->template->path.'live.html',
+			Config::get()->html->template->path.'search.html',
 			[
 				'Title' => Config::get()->app->name,
 				'Slogan' => Config::get()->app->slogan,

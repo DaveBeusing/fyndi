@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+	<script async src="https://www.googletagmanager.com/gtag/js?id=G-V22GRNJ6NK"></script>
+	<script>
+		window.dataLayer = window.dataLayer || [];
+		function gtag(){dataLayer.push(arguments);}
+		gtag('js', new Date());
+		gtag('config', 'G-V22GRNJ6NK');
+	</script>
+	<meta charset="UTF-8">
+	<title><?=$_HTML->Title?> - <?=$_HTML->Slogan?></title>
+	<meta name="description" content="<?=$_HTML->Title?> - <?=$_HTML->Slogan?>">
+	<meta name="robots" content="noindex, nofollow">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" type="text/css" href="assets/css/search.css">
+</head>
+<body>
+	<h1><?=$_HTML->Title?> - <?=$_HTML->Slogan?></h1>
+	<div class="search">
+		<input type="text" id="search-input" placeholder="Produkt, EAN, MPN, SKU..." autocomplete="off" class=""/>
+		<div class="search-buttons">
+			<button id="search-clear">✖</button>
+			<label class="toggle-switch">
+				<input type="checkbox" id="highlight-toggle">
+				<span class="slider"></span>
+			</label>
+			<button id="search-button">Suchen</button>
+		</div>
+	</div>
+	<div class="products" id="search-results"></div>
+	<span id="loading">Loading...</span>
+	<script type="module" src="assets/js/main.js"></script>
+</body>
+</html>
