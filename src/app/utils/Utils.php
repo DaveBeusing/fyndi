@@ -55,7 +55,6 @@ class Utils {
 		return true;
 	}
 
-
 	/*** 
 	 * @source https://stackoverflow.com/a/5249971
 	 * @author https://stackoverflow.com/users/353790/robertpitt
