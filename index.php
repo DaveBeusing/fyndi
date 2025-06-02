@@ -38,81 +38,20 @@ require_once 'src/autoload.php';
  * Includes
  */
 use app\config\Config;
+use app\utils\Utils;
 use app\utils\Template;
 use app\database\MySQLPDO;
 use app\dataprovider\ApiGmbH;
-
-use app\utils\Utils;
+use app\dataprovider\Catalog;
 
 $html = new Template();
 
 switch( filter_input( INPUT_GET, 'view', FILTER_SANITIZE_SPECIAL_CHARS ) ):
 
 	case 'image':
-		$basename = filter_input( INPUT_GET, 'uid', FILTER_SANITIZE_SPECIAL_CHARS );
-		$placeholdertext = 'Kein Bild';
-		$width = (int) ( filter_input( INPUT_GET, 'w', FILTER_SANITIZE_SPECIAL_CHARS ) ?? 800 );
-		$height = (int) ( filter_input( INPUT_GET, 'h', FILTER_SANITIZE_SPECIAL_CHARS ) ?? 600 );
-		$basePath = 'assets/img/products/';
-		$extensions = ['jpg', 'jpeg', 'png'];
-		$found = false;
-		foreach( $extensions as $ext ){
-			$fullPath = $basePath . $basename . '.' . $ext;
-			if( file_exists( $fullPath ) ){
-				$found = $fullPath;
-				break;
-			}
-		}
-		if( $found ){
-			$info = getimagesize( $found );
-			$mime = $info['mime'];
-			switch ($mime) {
-				case 'image/jpeg': 
-					$src = imagecreatefromjpeg( $found );
-				break;
-				case 'image/png':
-					$src = imagecreatefrompng( $found );
-				break;
-				case 'image/webp':
-					$src = imagecreatefromwebp( $found );
-				break;
-				case 'image/gif':
-					$src = imagecreatefromgif( $found );
-				break;
-				default:
-					http_response_code( 415 );
-					exit( "Unsupported format" );
-			}
-			$resized = imagecreatetruecolor( $width, $height );
-			imagecopyresampled( $resized, $src, 0, 0, 0, 0, $width, $height, imagesx( $src ), imagesy( $src ) );
-			header( "Content-Type: $mime" );
-			switch ($mime) {
-				case 'image/jpeg':
-					imagejpeg( $resized );
-				break;
-				case 'image/png':
-					imagepng( $resized );
-				break;
-				case 'image/webp':
-					imagewebp( $resized );
-				break;
-				case 'image/gif':
-					imagegif( $resized );
-				break;
-			}
-			imagedestroy( $src );
-			imagedestroy( $resized );
-		} else {
-			// SVG-Fallback
-			header( "Content-Type: image/svg+xml" );
-			$label = htmlspecialchars( $placeholdertext );
-			echo <<<SVG
-				<svg width="$width" height="$height" xmlns="http://www.w3.org/2000/svg">
-					<rect width="100%" height="100%" fill="#ccc"/>
-					<text x="50%" y="50%" text-anchor="middle" dominant-baseline="middle" font-family="Arial" font-size="16" fill="#444">$label</text>
-				</svg>
-			SVG;
-		}
+		$uid = filter_input( INPUT_GET, 'uid', FILTER_SANITIZE_SPECIAL_CHARS );
+		$size = explode( 'x', ( filter_input( INPUT_GET, 'size', FILTER_SANITIZE_SPECIAL_CHARS ) ?? '800x600' ) );
+		Catalog::getProductImage( $uid, $size[0], $size[1] );
 	break;
 
 	case 'api':
