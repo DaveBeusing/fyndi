@@ -40,8 +40,6 @@ require_once 'src/autoload.php';
 use app\config\Config;
 use app\utils\Utils;
 use app\utils\Template;
-use app\database\MySQLPDO; //moved to catalog
-use app\dataprovider\ApiGmbH;
 use app\dataprovider\Catalog;
 
 $html = new Template();
@@ -66,53 +64,14 @@ switch( filter_input( INPUT_GET, 'view', FILTER_SANITIZE_SPECIAL_CHARS ) ):
 			header( 'Location: '. Config::get()->app->url );
 			exit;
 		}
-		$pdo = new MySQLPDO( Config::get()->db->host, Config::get()->db->database, Config::get()->db->user, Config::get()->db->password, 'utf8mb4' );
-		$pdo->setAttribute( \PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION );
-		$stmt = $pdo->prepare( "SELECT * FROM catalog WHERE uid = :uid" );
-		$stmt->bindParam( ':uid', $uid, \PDO::PARAM_STR );
-		$stmt->execute();
-		$result = $stmt->fetch( \PDO::FETCH_ASSOC );
-		if( $result === false ){
-			echo "Kein Eintrag mit UID $uid gefunden.";
-			exit;
-		}
-		$gpsr_dummy = array(
-			'brand' => '',
-			'company' => '',
-			'street' => '',
-			'country' => '',
-			'city' => '',
-			'homepage' => '',
-			'support_url' => '',
-			'support_email' => '',
-			'support_hotline' => ''
-		);
-		$gpsr = false;
-		if( $result['gpsr'] != null ){
-			$gpsr_uid = $result['gpsr'];
-			$stmt = $pdo->prepare( "SELECT * FROM gpsr WHERE uid = :uid" );
-			$stmt->bindParam( ':uid', $gpsr_uid, \PDO::PARAM_STR );
-			$stmt->execute();
-			$gpsr = $stmt->fetch( \PDO::FETCH_ASSOC );
-			if( $gpsr === false ){
-				$gpsr = $gpsr_dummy;
-			}
-			else {
-				$gpsr = $gpsr;
-			}
-			$result['gpsr'] = (object) $gpsr;
-		}
-		$result['gpsr'] = ( $gpsr === false ) ? (object) $gpsr_dummy : (object) $gpsr;
-		$result['iscondition'] = ApiGmbH::convertCondition( $result['iscondition'] );
-		$result['availability'] = ApiGmbH::convertAvailability( $result['availability'] );
-		$result['shipping'] = ApiGmbH::convertShipping( $result['shipping'] );
+		$item = Catalog::getItemDetails( $uid );
 		$html->view(
 			Config::get()->html->template->path.'item.html',
 			[
 				'Title' => Config::get()->app->name,
 				'URL' => Config::get()->app->url,
 				'Slogan' => Config::get()->app->slogan,
-				'Item' => (object) $result
+				'Item' => (object) $item
 			]
 		);
 	break;
@@ -121,8 +80,6 @@ switch( filter_input( INPUT_GET, 'view', FILTER_SANITIZE_SPECIAL_CHARS ) ):
 		$uid = Utils::generateUID();
 		$isValid = Utils::validateUID( $uid );
 		print "UID: $uid / isValid: $isValid";
-
-		//ApiGmbH::processGPSR();
 	break;
 
 	default:

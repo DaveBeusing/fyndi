@@ -27,6 +27,7 @@ namespace app\dataprovider;
 
 use app\config\Config;
 use app\database\MySQLPDO;
+use app\dataprovider\ApiGmbH;
 
 class Catalog {
 
@@ -65,6 +66,50 @@ class Catalog {
 		header( 'Content-Type: application/json' );
 		echo json_encode( $results, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT );
 		exit;
+	}
+
+	public static function getItemDetails( $uid ){
+		$pdo = new MySQLPDO( Config::get()->db->host, Config::get()->db->database, Config::get()->db->user, Config::get()->db->password, 'utf8mb4' );
+		$pdo->setAttribute( \PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION );
+		$stmt = $pdo->prepare( "SELECT * FROM catalog WHERE uid = :uid" );
+		$stmt->bindParam( ':uid', $uid, \PDO::PARAM_STR );
+		$stmt->execute();
+		$result = $stmt->fetch( \PDO::FETCH_ASSOC );
+		if( $result === false ){
+			echo "Kein Eintrag mit UID $uid gefunden.";
+			exit;
+		}
+		$gpsr_dummy = array(
+			'brand' => '',
+			'company' => '',
+			'street' => '',
+			'country' => '',
+			'city' => '',
+			'homepage' => '',
+			'support_url' => '',
+			'support_email' => '',
+			'support_hotline' => ''
+		);
+		$gpsr = false;
+		if( $result['gpsr'] != null ){
+			$gpsr_uid = $result['gpsr'];
+			$stmt = $pdo->prepare( "SELECT * FROM gpsr WHERE uid = :uid" );
+			$stmt->bindParam( ':uid', $gpsr_uid, \PDO::PARAM_STR );
+			$stmt->execute();
+			$gpsr = $stmt->fetch( \PDO::FETCH_ASSOC );
+			if( $gpsr === false ){
+				$gpsr = $gpsr_dummy;
+			}
+			else {
+				$gpsr = $gpsr;
+			}
+			$result['gpsr'] = (object) $gpsr;
+		}
+		$result['gpsr'] = ( $gpsr === false ) ? (object) $gpsr_dummy : (object) $gpsr;
+		$result['iscondition'] = ApiGmbH::convertCondition( $result['iscondition'] );
+		$result['availability'] = ApiGmbH::convertAvailability( $result['availability'] );
+		$result['shipping'] = ApiGmbH::convertShipping( $result['shipping'] );
+		return $result;
 	}
 
 	public static function getProductImage( $uid = false, $width = 800, $height = 600, $placeholdertext = 'Kein Bild' ){
