@@ -23,18 +23,14 @@
  */
 @import url('https://fonts.googleapis.com/css?family=Roboto:100,300,400');
 
-:root{
-	/**
-	 * api Corporate Identity
-	 * Color
-	 * Blue 	#233588 / RGB 35 53 136 
-	 * Gold 	#FFC000 / RGB 255 192 0
-	 * White 	#FFFFFF / RGB 255 255 255
-	 */
-	 --color-blue: #233588;
-	 --color-white: #ffffff;
-	 --color-gold: #ffc000;
-	 --color-gray: #edeef0;
+:root {
+	--primary: #2c3e50;
+	--accent: #3498db;
+	--background: #f4f6f8;
+	--card-bg: #ffffff;
+	--text: #2d2d2d;
+	--muted: #6c757d;
+	--highlight: #6b1ba0;
 }
 
 * {
@@ -54,6 +50,7 @@ body {
 	align-items: center;
 	height: 100vh;
 	color: #404040;
+	padding-bottom: 80px; /* Platz für Footer */
 }
 
 a {
@@ -125,7 +122,6 @@ input[name="slide"]:checked + .gallery-thumbs label img {
 	display: none;
 }
 
-
 #img1:checked ~ .gallery-main img:nth-child(1),
 #img2:checked ~ .gallery-main img:nth-child(2),
 #img3:checked ~ .gallery-main img:nth-child(3) {
@@ -143,7 +139,6 @@ input[name="slide"]:checked + .gallery-thumbs label img {
 	margin-bottom: 1rem;
 }
 
-
 .price-box {
 	/* border: 2px solid #3b82f6; */ /* Blau */
 	padding: 1rem 0.5rem;
@@ -152,7 +147,6 @@ input[name="slide"]:checked + .gallery-thumbs label img {
 	text-align: center;
 	max-width: 180px;
 }
-
 
 .net-price {
 	display: inline-block;
@@ -167,6 +161,7 @@ input[name="slide"]:checked + .gallery-thumbs label img {
 	font-weight: 800;
 	content: attr(data-price);
 }
+
 .net-price::before {
 	content: '';
 	display: block;
@@ -179,9 +174,11 @@ input[name="slide"]:checked + .gallery-thumbs label img {
 	-ms-transform: skewX(-5deg);
 	transform: skewX(-5deg);
 }
+
 .net-price::after, .net-price::before {
 	position: absolute;
 }
+
 .net-price::after {
 	content: attr(data-cents);
 	top: .17em;
@@ -211,12 +208,6 @@ input[name="slide"]:checked + .gallery-thumbs label img {
 	margin-top: 0.5rem;
 }
 
-
-
-
-
-
-
 .description {
 	line-height: 1.6;
 	margin-bottom: 1rem;
@@ -240,4 +231,22 @@ input[name="slide"]:checked + .gallery-thumbs label img {
 	.gallery, .info {
 	flex: 1;
 	}
+}
+
+.footer {
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	background: var(--primary);
+	color: white;
+	text-align: center;
+	padding: 16px;
+	font-size: 0.9rem;
+	box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.1);
+	z-index: 10;
+	/* RAINBOW BORDER */
+	border-top: 5px solid transparent;
+	border-image: linear-gradient(to bottom right, #b827fc 0%, #2c90fc 25%, #b8fd33 50%, #fec837 75%, #fd1892 100%);
+	border-image-slice: 1;
 }
