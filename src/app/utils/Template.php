@@ -26,7 +26,7 @@ namespace app\utils;
 
 class Template {
 	public function __construct(){}
-	public function view( $file, $params = array() ){
+	public static function view( $file, $params = array() ){
 		$_HTML = (object) $params;
 		if( file_exists( $file ) ){
 			include( $file );

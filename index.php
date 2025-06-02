@@ -42,8 +42,6 @@ use app\utils\Utils;
 use app\utils\Template;
 use app\dataprovider\Catalog;
 
-$html = new Template();
-
 switch( filter_input( INPUT_GET, 'view', FILTER_SANITIZE_SPECIAL_CHARS ) ):
 
 	case 'image':
@@ -65,7 +63,7 @@ switch( filter_input( INPUT_GET, 'view', FILTER_SANITIZE_SPECIAL_CHARS ) ):
 			exit;
 		}
 		$item = Catalog::getItemDetails( $uid );
-		$html->view(
+		Template::view(
 			Config::get()->html->template->path.'item.html',
 			[
 				'Title' => Config::get()->app->name,
@@ -83,7 +81,7 @@ switch( filter_input( INPUT_GET, 'view', FILTER_SANITIZE_SPECIAL_CHARS ) ):
 	break;
 
 	default:
-		$html->view(
+		Template::view(
 			Config::get()->html->template->path.'search.html',
 			[
 				'Title' => Config::get()->app->name,
