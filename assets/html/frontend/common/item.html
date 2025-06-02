@@ -13,7 +13,7 @@
 	<meta name="description" content="<?=$_HTML->Title?> - <?=$_HTML->Slogan?>">
 	<meta name="robots" content="noindex, nofollow">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="stylesheet" type="text/css" href="assets/css/item.css">
+	<link rel="stylesheet" type="text/css" href="<?=$_HTML->URL?>/assets/css/item.css">
 </head>
 <body>
 	<div class="container">
@@ -25,15 +25,15 @@
 			<input type="radio" name="slide" id="img3">
 			<!-- Main images -->
 			<div class="gallery-main">
-				<img src="?view=image&uid=<?=$_HTML->Item->uid?>_1&size800x600" alt="Bild 1">
-				<img src="?view=image&uid=<?=$_HTML->Item->uid?>_2&size800x600" alt="Bild 2">
-				<img src="?view=image&uid=<?=$_HTML->Item->uid?>_3&size800x600" alt="Bild 3">
+				<img src="<?=$_HTML->URL?>/image/<?=$_HTML->Item->uid?>_1/800x600" alt="Bild 1">
+				<img src="<?=$_HTML->URL?>/image/<?=$_HTML->Item->uid?>_2/800x600" alt="Bild 2">
+				<img src="<?=$_HTML->URL?>/image/<?=$_HTML->Item->uid?>_3/800x600" alt="Bild 3">
 			</div>
 			<!-- Thumbnail nav -->
 			<div class="gallery-thumbs">
-				<label for="img1"><img src="?view=image&uid=<?=$_HTML->Item->uid?>_1&size120x90" alt="Thumb 1"></label>
-				<label for="img2"><img src="?view=image&uid=<?=$_HTML->Item->uid?>_2&size120x90" alt="Thumb 2"></label>
-				<label for="img3"><img src="?view=image&uid=<?=$_HTML->Item->uid?>_3&size120x90" alt="Thumb 3"></label>
+				<label for="img1"><img src="<?=$_HTML->URL?>/image/<?=$_HTML->Item->uid?>_1/120x90" alt="Thumb 1"></label>
+				<label for="img2"><img src="<?=$_HTML->URL?>/image/<?=$_HTML->Item->uid?>_2/120x90" alt="Thumb 2"></label>
+				<label for="img3"><img src="<?=$_HTML->URL?>/image/<?=$_HTML->Item->uid?>_3/120x90" alt="Thumb 3"></label>
 			</div>
 			<div clas="meta">
 				<b>General Product Safety Regulation – GPSR</b><br><br>

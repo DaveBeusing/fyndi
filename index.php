@@ -141,6 +141,7 @@ switch( filter_input( INPUT_GET, 'view', FILTER_SANITIZE_SPECIAL_CHARS ) ):
 			Config::get()->html->template->path.'item.html',
 			[
 				'Title' => Config::get()->app->name,
+				'URL' => Config::get()->app->url,
 				'Slogan' => Config::get()->app->slogan,
 				'Item' => (object) $result
 			]
@@ -160,6 +161,7 @@ switch( filter_input( INPUT_GET, 'view', FILTER_SANITIZE_SPECIAL_CHARS ) ):
 			Config::get()->html->template->path.'search.html',
 			[
 				'Title' => Config::get()->app->name,
+				'URL' => Config::get()->app->url,
 				'Slogan' => Config::get()->app->slogan,
 			]
 		);

@@ -24,7 +24,13 @@
 export default class fyndi {
 	constructor( debug=false ){
 		this.debug = debug;
-		this.api = 'index.php?view=api&query=';
+
+		this.url = {
+			base_url : 'https://bsng.eu/app/fyndi/',
+			api_endpoint : 'api/?query=',
+			item_detailpage : 'item/'
+		};
+
 		this.isHighighting = !this.isHighighting || true;
 		this.elements = {
 			search_button : this.$( '#search-button' ),
@@ -62,7 +68,7 @@ export default class fyndi {
 			card.style.animationDelay = `${index * 0.1}s`;
 			card.title = "Produktseite in neuem Tab öffnen";
 			card.onclick = () => {
-					window.open( `https://bsng.eu/app/fyndi/?view=item&uid=${item.uid}`, '_blank');
+					window.open( `${this.url.base_url}${this.url.item_detailpage}${item.uid}`, '_blank');
 			};
 			card.innerHTML = `
 			<svg class="external-link-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14 3h7v7h-2V6.41l-9.29 9.3-1.42-1.42 9.3-9.29H14V3z"/><path d="M5 5h4V3H5c-1.1 0-2 .9-2 2v4h2V5zm14 14h-4v2h4c1.1 0 2-.9 2-2v-4h-2v4zM5 19v-4H3v4c0 1.1.9 2 2 2h4v-2H5z"/></svg>
@@ -83,7 +89,7 @@ export default class fyndi {
 			this.elements.search_results.innerHTML = '';
 			return;
 		}
-		fetch( `${this.api}${encodeURIComponent( query )}` )
+		fetch( `${this.url.base_url}${this.url.api_endpoint}${encodeURIComponent( query )}` )
 			.then( response => {
 				if( !response.ok ) throw new Error( 'Network error' );
 				return response.json();
