@@ -51,6 +51,11 @@ switch( filter_input( INPUT_GET, 'view', FILTER_SANITIZE_SPECIAL_CHARS ) ):
 	break;
 
 	case 'api':
+		$filters = filter_input( INPUT_GET, 'filters', FILTER_SANITIZE_SPECIAL_CHARS ) ?? false;
+		if( $filters ){
+			Catalog::getSearchFilters();
+			exit;
+		}
 		$query = filter_input( INPUT_GET, 'query', FILTER_SANITIZE_SPECIAL_CHARS );
 		Catalog::getSearchResults( $query );
 	break;

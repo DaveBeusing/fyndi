@@ -24,19 +24,19 @@
 export default class fyndi {
 	constructor( debug=false ){
 		this.debug = debug;
-
 		this.url = {
 			base_url : 'https://bsng.eu/app/fyndi/',
 			api_endpoint : 'api/?query=',
-			item_detailpage : 'item/'
+			item_detailpage : 'item/',
+			filters_endpoint : 'api/filters'
 		};
-
 		this.isHighighting = !this.isHighighting || true;
 		this.elements = {
 			search_button : this.$( '#search-button' ),
 			search_input : this.$( '#search-input' ),
 			search_results : this.$( '#search-results' ),
 			search_clear : this.$( '#search-clear' ),
+			search_info : this.$( '#search-info' ),
 			highlight_toggle : this.$( '#highlight-toggle')
 		};
 		this.debounce = {
@@ -44,6 +44,10 @@ export default class fyndi {
 			'delay' : 400,
 			'timer' : false,
 		};
+		this.filters = {
+			'brands' : [],
+			'categories' : []
+		}
 	};
 	$( element ){
 		return document.querySelector( element );
@@ -58,6 +62,7 @@ export default class fyndi {
 			this.elements.search_clear.classList.add( "visible" );
 		} else {
 			this.elements.search_clear.classList.remove( "visible" );
+			this.elements.search_info.classList.remove( "visible" );
 		}
 	}
 	renderSearchResults( items, query ){
@@ -89,6 +94,9 @@ export default class fyndi {
 			this.elements.search_results.innerHTML = '';
 			return;
 		}
+
+		console.log( this.detectQueryType( query ) );
+
 		fetch( `${this.url.base_url}${this.url.api_endpoint}${encodeURIComponent( query )}` )
 			.then( response => {
 				if( !response.ok ) throw new Error( 'Network error' );
@@ -108,8 +116,50 @@ export default class fyndi {
 				this.elements.search_results.innerHTML = `<div class="result-item">❌ Error: ${error.message}</div>`;
 			});
 	}
+	loadFilterData(){
+		fetch( `${this.url.base_url}${this.url.filters_endpoint}` )
+			.then( response => {
+				if( !response.ok ) throw new Error( 'Network error' );
+				return response.json();
+			})
+			.then( data => {
+				this.filters.brands = data.brands || [];
+				this.filters.categories = data.categories || [];
+				console.log( this.filters );
+			})
+			.catch( error => {
+				console.error( "Fehler beim Laden von Marken/Kategorien:", error );
+			});
+	}
+	detectQueryType( query ){
+		const tokens = query.toLowerCase().split(/\s+/);
+		const result = { query: "", brand: "", category: "" };
+		let message = "";
+		tokens.forEach( token => {
+			if( this.filters.brands.some( b => b.toLowerCase() === token.toLowerCase() ) ){
+				result.brand = token;
+				message += `Hersteller: ${token} `;
+			}
+			else if( this.filters.categories.some( c => c.toLowerCase() === token.toLowerCase() ) ){
+				result.category = token;
+				message += `Kategorie: ${token} `;
+			}
+			else {
+				result.query += token + ' ';
+			}
+		});
+		if( message)  {
+			this.elements.search_info.innerText = message;
+			this.elements.search_info.classList.add( "visible" );
+		} else {
+			this.elements.search_info.innerText = "";
+			this.elements.search_info.classList.remove( "visible" );
+		}
+		result.query = result.query.trim();
+		return result;
+	}
 	run(){
-
+		this.loadFilterData();
 		this.elements.search_input.addEventListener( 'input', () => {
 			this.toggleClearButtonVisibility();
 			if( this.debounce.active ){

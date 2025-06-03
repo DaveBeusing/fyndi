@@ -94,7 +94,6 @@ h1 {
 	font-size: 0.9rem;
 }
 
-
 .search-buttons button {
 	background: var(--accent);
 	border: none;
@@ -113,8 +112,6 @@ h1 {
 	background: #217dbb;
 	transform: scale(1.08);
 }
-
-
 
 .search-buttons button#search-clear {
 	opacity: 0;
@@ -135,6 +132,31 @@ h1 {
 	transform: scale(1.08);
 }
 
+.search-info {
+	position: absolute;
+	top: calc(100% + 6px); /* unterhalb des Inputs */
+	left: 0;
+	right: 0;
+	z-index: 10;
+	background: #fff;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	padding: 8px 12px;
+	border-radius: 8px;
+	box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+	opacity: 0;
+	transform: translateY(-6px);
+	transition: all 0.3s ease;
+	pointer-events: none;
+}
+
+.search-info.visible {
+	opacity: 1;
+	transform: translateY(0);
+	pointer-events: auto;
+	max-height: 500px;
+}
 
 .toggle-switch {
 	position: relative;
@@ -191,7 +213,7 @@ h1 {
 	grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
 	gap: 24px;
 	max-width: 1200px;
-	margin: 0 auto;
+	margin: 35px auto;
 }
 
 .card {

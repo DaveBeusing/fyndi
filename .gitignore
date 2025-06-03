@@ -1,4 +1,5 @@
 src/app/config/Config.php
 src/data/*.csv
+src/data/*.json
 src/log/*
 assets/img/products/*

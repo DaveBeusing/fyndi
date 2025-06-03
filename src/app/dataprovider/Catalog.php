@@ -33,6 +33,40 @@ class Catalog {
 
 	public function __construct( ){ }
 
+	public static function getSearchFilters(){
+		if( file_exists( Config::get()->dataprovider->filters ) ){
+			$json = file_get_contents( Config::get()->dataprovider->filters );
+		}
+		else {
+			$pdo = new MySQLPDO( Config::get()->db->host, Config::get()->db->database, Config::get()->db->user, Config::get()->db->password, 'utf8mb4' );
+			$pdo->setAttribute( \PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION );
+			$stmt = $pdo->prepare("
+				SELECT DISTINCT manufacturer AS value, 'manufacturer' AS type FROM catalog WHERE manufacturer != '' 
+				UNION
+				SELECT DISTINCT category1 AS value, 'category1' AS type FROM catalog WHERE category1 != '';"
+			);
+			$stmt->execute();
+			$results = $stmt->fetchAll( \PDO::FETCH_ASSOC );
+			$brands = [];
+			$categories = [];
+			foreach ($results as $row) {
+				if( $row['type'] === 'manufacturer' && !empty( $row['value'] ) ){
+					$brands[] = $row['value'];
+				}
+				elseif( $row['type'] === 'category1' && !empty( $row['value'] ) ){
+					$categories[] = $row['value'];
+				}
+			}
+			$json = json_encode([
+				'brands' =>  $brands,
+				'categories' => $categories
+			]);
+			file_put_contents( Config::get()->dataprovider->filters, $json );
+		}
+		header( 'Content-Type: application/json' );
+		echo $json;
+	}
+
 	public static function getSearchResults( $query ){
 		if( !$query || mb_strlen( $query ) < 2 ){
 			echo json_encode( [] );
