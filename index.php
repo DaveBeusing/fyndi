@@ -79,6 +79,16 @@ switch( filter_input( INPUT_GET, 'view', FILTER_SANITIZE_SPECIAL_CHARS ) ):
 		);
 	break;
 
+	case 'manager':
+		Template::view(
+			Config::get()->html->template->backend.'manager.html',
+			[
+				'Title' => Config::get()->app->name,
+				'URL' => Config::get()->app->url
+			]
+		);
+	break;
+
 	case 'debug':
 		$uid = Utils::generateUID();
 		$isValid = Utils::validateUID( $uid );

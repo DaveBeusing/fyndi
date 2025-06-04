@@ -1,0 +1,119 @@
+/**
+ * Copyright (c) 2025 Dave Beusing <david.beusing@gmail.com>
+ *
+ * MIT License - https://opensource.org/license/mit/
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is furnished
+ * to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+ * INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+ * PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+ * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+ * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ */
+@import url('https://fonts.googleapis.com/css?family=Roboto:100,300,400');
+
+body {
+	font-family: 'Roboto', "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+	margin: 0;
+	background-color: #f4f6f8;
+}
+header {
+	background-color: #1f2937;
+	color: white;
+	padding: 1rem 2rem;
+}
+main {
+	padding: 2rem;
+}
+h1 {
+	margin: 0;
+	font-size: 1.5rem;
+}
+.toolbar {
+	display: flex;
+	justify-content: space-between;
+	margin-bottom: 1rem;
+	flex-wrap: wrap;
+	gap: 1rem;
+}
+.toolbar input[type="text"] {
+	padding: 0.5rem;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	width: 200px;
+}
+.toolbar button {
+	padding: 0.5rem 1rem;
+	background-color: #2563eb;
+	border: none;
+	color: white;
+	border-radius: 4px;
+	cursor: pointer;
+}
+.column-toggle label {
+	margin-right: 10px;
+	font-size: 0.9rem;
+}
+table {
+	width: 100%;
+	border-collapse: collapse;
+	background-color: white;
+	box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+th, td {
+	padding: 0.75rem;
+	text-align: left;
+	border-bottom: 1px solid #eee;
+}
+th.sortable {
+	cursor: pointer;
+	user-select: none;
+}
+th.sortable::after {
+	content: '\25B4';
+	float: right;
+	opacity: 0.3;
+}
+th.sortable.desc::after {
+	content: '\25BE';
+	opacity: 1;
+}
+th.sortable.asc::after {
+	content: '\25B4';
+	opacity: 1;
+}
+.hidden {
+	display: none;
+}
+.pagination {
+	display: flex;
+	justify-content: center;
+	margin-top: 1rem;
+}
+.pagination button {
+	padding: 0.4rem 0.75rem;
+	margin: 0 0.2rem;
+	background-color: #e5e7eb;
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
+}
+.pagination button.active {
+	background-color: #2563eb;
+	color: white;
+}
+
+form { margin-top: 20px; display: none; border: 1px solid #999; padding: 10px; background: #f9f9f9; }
+form.active { display: block; }
+.form-label { display: block; margin-top: 10px; }

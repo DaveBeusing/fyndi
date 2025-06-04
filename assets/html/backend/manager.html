@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+	<meta charset="UTF-8">
+	<title>Catalog Manager</title>
+	<meta name="description" content="Catalog Manager">
+	<meta name="robots" content="noindex, nofollow">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" type="text/css" href="assets/css/backend/manager.css">
+</head>
+<body>
+	<header>
+		<h1>Catalog Manager</h1>
+	</header>
+	<main>
+		<div class="toolbar">
+			<div class="column-toggle">
+				<label><input type="checkbox" checked onchange="toggleColumn(0)"> UID</label>
+				<label><input type="checkbox" checked onchange="toggleColumn(1)"> Titel</label>
+				<label><input type="checkbox" checked onchange="toggleColumn(2)"> Status</label>
+				<label><input type="checkbox" checked onchange="toggleColumn(3)"> Preis</label>
+				<label><input type="checkbox" checked onchange="toggleColumn(4)"> Lager</label>
+			</div>
+			<input type="text" id="searchInput" placeholder="Live-Suche...">
+			<button onclick="newEntry()">✨ Neuer Eintrag</button>
+			<button onclick="window.location='?csv=1'">📁 CSV-Export</button>
+		</div>
+		<table id="catalogTable">
+			<thead>
+				<tr>
+				<th class="sortable" onclick="setSort('uid', this)">UID</th>
+				<th class="sortable" onclick="setSort('title', this)">Titel</th>
+				<th class="sortable" onclick="setSort('status', this)">Status</th>
+				<th class="sortable" onclick="setSort('price', this)">Preis</th>
+				<th class="sortable" onclick="setSort('stock', this)">Lager</th>
+				</tr>
+			</thead>
+			<tbody id="catalogBody"></tbody>
+		</table>
+		<div class="pagination" id="pagination"></div>
+		<form id="catalogForm">
+			<input type="hidden" name="action" value="save">
+			<label>UID <input name="uid" required></label>
+			<div id="formFields"></div>
+			<button type="submit">Speichern</button>
+			<button type="button" onclick="deleteEntry()">Löschen</button>
+			<button type="button" onclick="closeForm()">Abbrechen</button>
+		</form>
+	</main>
+	<span id="loading">Loading...</span>
+	<script type="module" src="assets/js/backend/main.js"></script>
+</body>
+</html>
