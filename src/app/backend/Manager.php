@@ -39,7 +39,7 @@ class Manager {
 		$like = '%' . $query . '%';
 		$whereSql = "WHERE uid LIKE :q OR title LIKE :q";
 		$countStmt = $pdo->prepare( "SELECT COUNT(*) FROM catalog $whereSql" );
-		$countStmt->bindParam( ':q', $lik, \PDO::PARAM_STR );
+		$countStmt->bindParam( ':q', $like, \PDO::PARAM_STR );
 		$countStmt->execute();
 		$total = $countStmt->fetchColumn();
 		$dataStmt = $pdo->prepare("

@@ -36,7 +36,8 @@ export default class manager {
 			catalogItemFormFields : this.$( '#catalog-item-formfields' ),
 			buttonCreateItem : this.$( '#create-item' ),
 			buttonDeleteItem : this.$( '#delete-item' ),
-			buttonAbort : this.$( '#abort' )
+			buttonAbort : this.$( '#abort' ),
+			pagination : this.$( '#pagination' )
 		};
 		this.CatalogFields = {
 			'fields' : [
@@ -48,12 +49,13 @@ export default class manager {
 			],
 			'dateFields' : ['created', 'updated', 'eoldate', 'stocketa']
 		};
+		this.currentQuery = '';
 	}
 	$( element ){
 		return document.querySelector( element );
 	}
 	loadEntries( query = '', page = 1 ) {
-		let currentQuery = query;
+		this.currentQuery = query;
 		let currentPage = page;
 		let sortBy = 'updated';
 		let sortDir = 'asc';
@@ -77,7 +79,7 @@ export default class manager {
 					});
 					tbody.appendChild( tr );
 			});
-			this.renderPagination( data.total );
+			this.renderPagination( data.total, currentPage );
 			});
 	}
 	editEntry( uid ) {
@@ -120,37 +122,45 @@ export default class manager {
 		const d = new Date( val );
 		return d.toISOString().slice( 0, 16 );
 	  }
-	renderPagination( totalRows ) {
+	renderPagination( totalRows, page ) {
 		const rowsPerPage = 10;
-		let currentPage = 1;//page
+		let currentPage = page;
 		const totalPages = Math.ceil(totalRows / rowsPerPage);
-		const pagination = this.$( 'pagination' );
+		const pagination = this.ui.pagination;
 		pagination.innerHTML = '';
-
 		if (totalPages <= 1) return;
-
 		const prev = document.createElement('button');
 		prev.textContent = '‹';
 		prev.disabled = currentPage === 1;
-		prev.onclick = () => loadEntries(currentQuery, currentPage - 1);
+		prev.addEventListener( 'click', event => {
+			this.loadEntries( this.currentQuery, currentPage - 1 );
+		});
+		//prev.onclick = () => loadEntries(currentQuery, currentPage - 1);
 		pagination.appendChild(prev);
 
-		const startPage = Math.max(1, currentPage - 2);
-		const endPage = Math.min(totalPages, currentPage + 2);
+		const startPage = Math.max( 1, currentPage - 2 );
+		const endPage = Math.min( totalPages, currentPage + 2 );
 
-		for (let i = startPage; i <= endPage; i++) {
+		for( let i = startPage; i <= endPage; i++ ){
 			const btn = document.createElement('button');
 			btn.textContent = i;
-			btn.classList.toggle('active', i === currentPage);
-			btn.onclick = () => loadEntries(currentQuery, i);
+			btn.classList.toggle( 'active', i === currentPage );
+			btn.addEventListener( 'click', event => {
+				this.loadEntries( this.currentQuery, i );
+			} );
+
+			//btn.onclick = () => loadEntries(currentQuery, i);
 			pagination.appendChild(btn);
 		}
 
 		const next = document.createElement('button');
 		next.textContent = '›';
 		next.disabled = currentPage === totalPages;
-		next.onclick = () => loadEntries(currentQuery, currentPage + 1);
-		pagination.appendChild(next);
+		next.addEventListener( 'click', event => {
+			this.loadEntries( this.currentQuery, currentPage + 1 );
+		} );
+		//next.onclick = () => loadEntries(currentQuery, currentPage + 1);
+		pagination.appendChild( next );
 	}
 	setSort(column, element) {
 		const headers = document.querySelectorAll('th.sortable');
