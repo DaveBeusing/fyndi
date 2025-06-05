@@ -14,12 +14,42 @@
 	</header>
 	<main>
 		<div class="toolbar">
-			<div class="column-toggle">
-				<label><input type="checkbox" checked id="toggle-uid"> UID</label>
-				<label><input type="checkbox" checked id="toggle-title"> Titel</label>
-				<label><input type="checkbox" checked id="toggle-status"> Status</label>
-				<label><input type="checkbox" checked id="toggle-price"> Preis</label>
-				<label><input type="checkbox" checked id="toggle-stock"> Lager</label>
+			<div class="column-toggle-vertical">
+				<div class="toggle-item">
+					<label>UID</label>
+					<label class="vertical-switch">
+					<input type="checkbox" checked id="toggle-uid">
+					<span class="slider"></span>
+					</label>
+				</div>
+				<div class="toggle-item">
+					<label>Titel</label>
+					<label class="vertical-switch">
+					<input type="checkbox" checked id="toggle-title">
+					<span class="slider"></span>
+					</label>
+				</div>
+				<div class="toggle-item">
+					<label>Status</label>
+					<label class="vertical-switch">
+					<input type="checkbox" checked id="toggle-status">
+					<span class="slider"></span>
+					</label>
+				</div>
+				<div class="toggle-item">
+					<label>Price</label>
+					<label class="vertical-switch">
+					<input type="checkbox" checked id="toggle-price">
+					<span class="slider"></span>
+					</label>
+				</div>
+				<div class="toggle-item">
+					<label>Stock</label>
+					<label class="vertical-switch">
+					<input type="checkbox" checked id="toggle-stock">
+					<span class="slider"></span>
+					</label>
+				</div>
 			</div>
 			<input type="text" id="search-input" placeholder="Live-Suche...">
 			<button id="create-item">✨ Neuer Eintrag</button>

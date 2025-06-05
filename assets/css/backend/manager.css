@@ -51,7 +51,8 @@ h1 {
 	padding: 0.5rem;
 	border: 1px solid #ccc;
 	border-radius: 4px;
-	width: 200px;
+	width: 600px;
+	max-height: 40px;
 }
 .toolbar button {
 	padding: 0.5rem 1rem;
@@ -60,11 +61,68 @@ h1 {
 	color: white;
 	border-radius: 4px;
 	cursor: pointer;
+	max-height: 40px;
 }
-.column-toggle label {
-	margin-right: 10px;
+
+.column-toggle-vertical {
+	display: flex;
+	gap: 1.5rem;
+	flex-wrap: wrap;
+	margin: 1rem 0;
+}
+
+.toggle-item {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
 	font-size: 0.9rem;
+	color: #374151;
 }
+
+.vertical-switch {
+	position: relative;
+	display: inline-block;
+	width: 28px;
+	height: 48px;
+	margin-top: 0.3rem;
+}
+
+.vertical-switch input {
+	opacity: 0;
+	width: 0;
+	height: 0;
+}
+
+.vertical-switch .slider {
+	position: absolute;
+	cursor: pointer;
+	top: 0; left: 0;
+	right: 0; bottom: 0;
+	background-color: #ccc;
+	transition: 0.4s;
+	border-radius: 28px;
+}
+
+.vertical-switch .slider:before {
+	position: absolute;
+	content: "";
+	width: 18px; height: 18px;
+	left: 5px;
+	bottom: 3px;
+	background-color: white;
+	border-radius: 50%;
+	transition: 0.4s;
+}
+
+.vertical-switch input:checked + .slider {
+	background-color: #2563eb;
+}
+
+.vertical-switch input:checked + .slider:before {
+	transform: translateY(-24px);
+}
+
+
 table {
 	width: 100%;
 	border-collapse: collapse;
