@@ -49,18 +49,20 @@ export default class manager {
 			],
 			'dateFields' : ['created', 'updated', 'eoldate', 'stocketa']
 		};
+		this.sortables = [ 'uid', 'title', 'status', 'price', 'stock' ];
+		this.sortBy = 'updated';
+		this.sortDir = 'asc';
 		this.currentQuery = '';
+		this.currentPage = 1;
+		this.rowsPerPage = 10;
 	}
 	$( element ){
 		return document.querySelector( element );
 	}
 	loadEntries( query = '', page = 1 ) {
 		this.currentQuery = query;
-		let currentPage = page;
-		let sortBy = 'updated';
-		let sortDir = 'asc';
-		const rowsPerPage = 10;
-		fetch(`backend?action=search&query=${encodeURIComponent(query)}&sort=${sortBy}&dir=${sortDir}&page=${page}&limit=${rowsPerPage}`)
+		this.currentPage = page;
+		fetch(`backend?action=search&query=${encodeURIComponent(query)}&sort=${this.sortBy}&dir=${this.sortDir}&page=${page}&limit=${this.rowsPerPage}`)
 			.then( r => r.json() )
 			.then( data => {
 				const tbody = this.ui.catalogItemsList;
@@ -79,7 +81,7 @@ export default class manager {
 					});
 					tbody.appendChild( tr );
 			});
-			this.renderPagination( data.total, currentPage );
+			this.renderPagination( data.total, this.currentPage );
 			});
 	}
 	editEntry( uid ) {
@@ -124,60 +126,57 @@ export default class manager {
 	  }
 	renderPagination( totalRows, page ) {
 		const rowsPerPage = 10;
-		let currentPage = page;
+		this.currentPage = page;
 		const totalPages = Math.ceil(totalRows / rowsPerPage);
 		const pagination = this.ui.pagination;
 		pagination.innerHTML = '';
 		if (totalPages <= 1) return;
 		const prev = document.createElement('button');
 		prev.textContent = '‹';
-		prev.disabled = currentPage === 1;
+		prev.disabled = this.currentPage === 1;
 		prev.addEventListener( 'click', event => {
-			this.loadEntries( this.currentQuery, currentPage - 1 );
+			this.loadEntries( this.currentQuery, this.currentPage - 1 );
 		});
-		//prev.onclick = () => loadEntries(currentQuery, currentPage - 1);
 		pagination.appendChild(prev);
 
-		const startPage = Math.max( 1, currentPage - 2 );
-		const endPage = Math.min( totalPages, currentPage + 2 );
+		const startPage = Math.max( 1, this.currentPage - 2 );
+		const endPage = Math.min( totalPages, this.currentPage + 2 );
 
 		for( let i = startPage; i <= endPage; i++ ){
 			const btn = document.createElement('button');
 			btn.textContent = i;
-			btn.classList.toggle( 'active', i === currentPage );
+			btn.classList.toggle( 'active', i === this.currentPage );
 			btn.addEventListener( 'click', event => {
 				this.loadEntries( this.currentQuery, i );
 			} );
-
-			//btn.onclick = () => loadEntries(currentQuery, i);
 			pagination.appendChild(btn);
 		}
 
 		const next = document.createElement('button');
 		next.textContent = '›';
-		next.disabled = currentPage === totalPages;
+		next.disabled = this.currentPage === totalPages;
 		next.addEventListener( 'click', event => {
-			this.loadEntries( this.currentQuery, currentPage + 1 );
+			this.loadEntries( this.currentQuery, this.currentPage + 1 );
 		} );
-		//next.onclick = () => loadEntries(currentQuery, currentPage + 1);
 		pagination.appendChild( next );
 	}
-	setSort(column, element) {
-		const headers = document.querySelectorAll('th.sortable');
-		headers.forEach(th => th.classList.remove('asc', 'desc'));
-		if (sortBy === column) {
-			sortDir = sortDir === 'asc' ? 'desc' : 'asc';
+	setSort( column, element ) {
+		const headers = document.querySelectorAll( 'th.sortable' );
+		headers.forEach( th => th.classList.remove( 'asc', 'desc' ) );
+		if( this.sortBy === column ){
+			this.sortDir = this.sortDir === 'asc' ? 'desc' : 'asc';
 		} else {
-			sortBy = column;
-			sortDir = 'asc';
+			this.sortBy = column;
+			this.sortDir = 'asc';
 		}
-		element.classList.add(sortDir);
-		this.loadEntries(currentQuery, currentPage);
+		element.classList.add( this.sortDir );
+		this.loadEntries( this.currentQuery, this.currentPage );
 	}
 	toggleColumn(index) {
-		const table = document.getElementById('catalogTable');
-		for (const row of table.rows) {
-			if (row.cells[index]) row.cells[index].classList.toggle('hidden');
+		for( const row of this.ui.catalogItemsList.rows) {
+			if( row.cells[index] ){
+				row.cells[index].classList.toggle( 'hidden' );
+			}
 		}
 	}
 	run(){
@@ -211,6 +210,18 @@ export default class manager {
 			.then( () => location.reload() );
 		});
 
+		this.sortables.forEach( ( val, key ) => {
+			this.$(`#toggle-${val}`).addEventListener( 'change', event => {
+				this.toggleColumn(key);
+			} );
+		} );
+
+		this.sortables.forEach( ( val, key ) => {
+			this.$(`#sort-${val}`).addEventListener( 'click', event => {
+				this.setSort( val, this.$(`#sort-${val}`) );
+			} );
+		} );
+		/* onclick="setSort('stock', this)" */
 
 	}
 }

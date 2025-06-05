@@ -15,11 +15,11 @@
 	<main>
 		<div class="toolbar">
 			<div class="column-toggle">
-				<label><input type="checkbox" checked onchange="toggleColumn(0)"> UID</label>
-				<label><input type="checkbox" checked onchange="toggleColumn(1)"> Titel</label>
-				<label><input type="checkbox" checked onchange="toggleColumn(2)"> Status</label>
-				<label><input type="checkbox" checked onchange="toggleColumn(3)"> Preis</label>
-				<label><input type="checkbox" checked onchange="toggleColumn(4)"> Lager</label>
+				<label><input type="checkbox" checked id="toggle-uid"> UID</label>
+				<label><input type="checkbox" checked id="toggle-title"> Titel</label>
+				<label><input type="checkbox" checked id="toggle-status"> Status</label>
+				<label><input type="checkbox" checked id="toggle-price"> Preis</label>
+				<label><input type="checkbox" checked id="toggle-stock"> Lager</label>
 			</div>
 			<input type="text" id="search-input" placeholder="Live-Suche...">
 			<button id="create-item">✨ Neuer Eintrag</button>
@@ -28,11 +28,11 @@
 		<table id="catalog-items">
 			<thead>
 				<tr>
-				<th class="sortable" onclick="setSort('uid', this)">UID</th>
-				<th class="sortable" onclick="setSort('title', this)">Titel</th>
-				<th class="sortable" onclick="setSort('status', this)">Status</th>
-				<th class="sortable" onclick="setSort('price', this)">Preis</th>
-				<th class="sortable" onclick="setSort('stock', this)">Lager</th>
+				<th class="sortable" id="sort-uid">UID</th>
+				<th class="sortable" id="sort-title">Titel</th>
+				<th class="sortable" id="sort-status">Status</th>
+				<th class="sortable" id="sort-price">Preis</th>
+				<th class="sortable" id="sort-stock">Lager</th>
 				</tr>
 			</thead>
 			<tbody id="catalog-items-list"></tbody>
