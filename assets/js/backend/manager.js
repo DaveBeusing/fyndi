@@ -22,117 +22,109 @@
  *
  */
 
-/**
-
-
-const form = document.getElementById('catalogForm');
-const formFields = document.getElementById('formFields');
-const dateFields = ['created', 'updated', 'eoldate', 'stocketa'];
-const fields = [
-  "status", "title", "description", "manufacturer", "gpsr", "mpn", "ean",
-  "taric", "unspc", "eclass", "weeenr", "tax", "category1", "category2",
-  "category3", "category4", "category5", "weight", "width", "depth", "height",
-  "volweight", "iseol", "eoldate", "minorderqty", "maxorderqty", "copyrightcharge",
-  "shipping", "sku", "iscondition", "availability", "stock", "stocketa", "price"
-];
-
-function formatDateTimeLocal(val) {
-  if (!val) return '';
-  const d = new Date(val);
-  return d.toISOString().slice(0, 16);
-}
-
-function fillForm(data = {}) {
-  form.classList.add('active');
-  form.uid.readOnly = !!data.uid;
-  form.uid.value = data.uid || '';
-  formFields.innerHTML = '';
-  fields.forEach(f => {
-    const type = dateFields.includes(f) ? (f === 'stocketa' ? 'date' : 'datetime-local') : 'text';
-    const val = data[f] || '';
-    const inputVal = type.includes('date') ? formatDateTimeLocal(val) : val;
-    formFields.innerHTML += `<label class="form-label">${f}<input name="${f}" type="${type}" value="${inputVal}"></label>`;
-  });
-}
-
-function closeForm() {
-  form.classList.remove('active');
-  form.reset();
-}
-
-function newEntry() {
-  fillForm();
-}
-
-function editEntry(uid) {
-  fetch('catalog_api.php?action=load&uid=' + encodeURIComponent(uid))
-    .then(r => r.json())
-    .then(data => fillForm(data));
-}
-
-function deleteEntry() {
-  if (!confirm('Wirklich löschen?')) return;
-  fetch('catalog_api.php', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({ action: 'delete', uid: form.uid.value })
-  }).then(() => location.reload());
-}
-
-form.onsubmit = e => {
-  e.preventDefault();
-  const data = {};
-  new FormData(form).forEach((val, key) => data[key] = val);
-  fetch('catalog_api.php', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify(data)
-  }).then(() => location.reload());
-};
-
-*/
-
-
 export default class manager {
 	constructor( debug=false ){
-		this.elements = {};
+		this.debug = debug;
+		this.app ={
+			baseURL : 'https://bsng.eu/app/fyndi/'
+		};
+		this.ui = {
+			searchInput : this.$( '#search-input' ),
+			catalogItems : this.$( '#catalog-items' ),
+			catalogItemsList : this.$( '#catalog-items-list' ),
+			catalogItemForm : this.$( '#catalog-item-form' ),
+			catalogItemFormFields : this.$( '#catalog-item-formfields' ),
+			buttonCreateItem : this.$( '#create-item' ),
+			buttonDeleteItem : this.$( '#delete-item' ),
+			buttonAbort : this.$( '#abort' )
+		};
+		this.CatalogFields = {
+			'fields' : [
+				"status", "title", "description", "manufacturer", "gpsr", "mpn", "ean",
+				"taric", "unspc", "eclass", "weeenr", "tax", "category1", "category2",
+				"category3", "category4", "category5", "weight", "width", "depth", "height",
+				"volweight", "iseol", "eoldate", "minorderqty", "maxorderqty", "copyrightcharge",
+				"shipping", "sku", "iscondition", "availability", "stock", "stocketa", "price"
+			],
+			'dateFields' : ['created', 'updated', 'eoldate', 'stocketa']
+		};
 	}
 	$( element ){
 		return document.querySelector( element );
 	}
-	loadEntries(query = '', page = 1) {
+	loadEntries( query = '', page = 1 ) {
 		let currentQuery = query;
 		let currentPage = page;
 		let sortBy = 'updated';
 		let sortDir = 'asc';
 		const rowsPerPage = 10;
-		fetch(`catalog_api.php?action=search&query=${encodeURIComponent(query)}&sort=${sortBy}&dir=${sortDir}&page=${page}&limit=${rowsPerPage}`)
-			.then(r => r.json())
-			.then(data => {
-			const tbody = document.getElementById('catalogBody');
-			tbody.innerHTML = '';
-			data.rows.forEach(row => {
-				const tr = document.createElement('tr');
-				tr.innerHTML = `
-				<td>${row.uid}</td>
-				<td>${row.title}</td>
-				<td>${row.status}</td>
-				<td>${row.price}</td>
-				<td>${row.stock}</td>
-				`;
-				tr.addEventListener( 'click', () => {
-				editEntry('${row.uid}');
-				});
-				tbody.appendChild(tr);
+		fetch(`backend?action=search&query=${encodeURIComponent(query)}&sort=${sortBy}&dir=${sortDir}&page=${page}&limit=${rowsPerPage}`)
+			.then( r => r.json() )
+			.then( data => {
+				const tbody = this.ui.catalogItemsList;
+				tbody.innerHTML = '';
+				data.rows.forEach( row => {
+					const tr = document.createElement('tr');
+					tr.innerHTML = `
+						<td>${row.uid}</td>
+						<td>${row.title}</td>
+						<td>${row.status}</td>
+						<td>${row.price}</td>
+						<td>${row.stock}</td>
+					`;
+					tr.addEventListener( 'click', () => {
+						this.editEntry( `${row.uid}` );
+					});
+					tbody.appendChild( tr );
 			});
-			this.renderPagination(data.total);
+			this.renderPagination( data.total );
 			});
 	}
+	editEntry( uid ) {
+		fetch( 'backend?action=load&uid=' + encodeURIComponent( uid ) )
+			.then( r => r.json() )
+			.then( data => this.fillForm( data ) );
+	}
+	newEntry() {
+		this.fillForm();
+	}
+	deleteEntry() {
+		if( !confirm( 'Wirklich löschen?' ) ) return;
+		fetch('backend', {
+		  method: 'POST',
+		  headers: {'Content-Type': 'application/json'},
+		  body: JSON.stringify({ action: 'delete', uid: this.ui.catalogItemForm.uid.value })
+		})
+		.then( () => location.reload() );
+	}
+	fillForm( data = {} ) {
+		const form = this.ui.catalogItemForm;
+		const formFields = this.ui.catalogItemFormFields;
+		form.classList.add( 'active' );
+		form.uid.readOnly = !!data.uid;
+		form.uid.value = data.uid || '';
+		formFields.innerHTML = '';
+		this.CatalogFields.fields.forEach( field => {
+			const type = this.CatalogFields.dateFields.includes( field ) ? ( field === 'stocketa' ? 'date' : 'datetime-local' ) : 'text';
+			const val = data[field] || '';
+			const inputVal = type.includes( 'date' ) ? this.formatDateTimeLocal( val ) : val;
+			formFields.innerHTML += `<label class="form-label">${field}<input name="${field}" type="${type}" value="${inputVal}"></label>`;
+		});
+	}
+	closeForm() {
+		this.ui.catalogItemForm.classList.remove( 'active' );
+		this.ui.catalogItemForm.reset();
+	}
+	formatDateTimeLocal( val ) {
+		if (!val) return '';
+		const d = new Date( val );
+		return d.toISOString().slice( 0, 16 );
+	  }
 	renderPagination( totalRows ) {
 		const rowsPerPage = 10;
 		let currentPage = 1;//page
 		const totalPages = Math.ceil(totalRows / rowsPerPage);
-		const pagination = document.getElementById('pagination');
+		const pagination = this.$( 'pagination' );
 		pagination.innerHTML = '';
 
 		if (totalPages <= 1) return;
@@ -180,8 +172,35 @@ export default class manager {
 	}
 	run(){
 		this.loadEntries();
-		document.getElementById('searchInput').addEventListener('input', e => {
-			this.loadEntries(e.target.value);
+
+		this.ui.searchInput.addEventListener( 'input', event => {
+			this.loadEntries( event.target.value );
+		} );
+
+		this.ui.buttonCreateItem.addEventListener( 'click', event => {
+			this.newEntry();
+		} );
+
+		this.ui.buttonDeleteItem.addEventListener( 'click', event => {
+			this.deleteEntry();
+		} );
+
+		this.ui.buttonAbort.addEventListener( 'click', event => {
+			this.closeForm();
+		} );
+
+		this.ui.catalogItemForm.addEventListener( 'submit', event => {
+			event.preventDefault();
+			const data = {};
+			new FormData( this.ui.catalogItemForm ).forEach( ( val, key ) => data[key] = val );
+			fetch( 'backend', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify( data )
+			})
+			.then( () => location.reload() );
 		});
+
+
 	}
 }

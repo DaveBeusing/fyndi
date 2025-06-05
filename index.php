@@ -41,6 +41,7 @@ use app\config\Config;
 use app\utils\Utils;
 use app\utils\Template;
 use app\dataprovider\Catalog;
+use app\backend\Manager;
 
 switch( filter_input( INPUT_GET, 'view', FILTER_SANITIZE_SPECIAL_CHARS ) ):
 
@@ -77,6 +78,31 @@ switch( filter_input( INPUT_GET, 'view', FILTER_SANITIZE_SPECIAL_CHARS ) ):
 				'Item' => (object) $item
 			]
 		);
+	break;
+
+	case 'backend':
+		$action_get = filter_input( INPUT_GET, 'action', FILTER_SANITIZE_SPECIAL_CHARS );
+		$action_post = filter_input( INPUT_POST, 'action', FILTER_SANITIZE_SPECIAL_CHARS );
+		$uid = filter_input( INPUT_GET, 'uid', FILTER_SANITIZE_SPECIAL_CHARS );
+		$query = filter_input( INPUT_GET, 'query', FILTER_SANITIZE_SPECIAL_CHARS ) ?? '';
+		$sort = filter_input( INPUT_GET, 'sort', FILTER_SANITIZE_SPECIAL_CHARS ) ?? 'uid';
+		$dir = ( filter_input( INPUT_GET, 'sort', FILTER_SANITIZE_SPECIAL_CHARS ) ?? 'asc' ) === 'desc' ? 'DESC' : 'ASC';
+		$page = max( 1, (int)( filter_input( INPUT_GET, 'page', FILTER_SANITIZE_NUMBER_INT ) ?? 1 ) );
+		$limit = max( 1, (int)( filter_input( INPUT_GET, 'limit', FILTER_SANITIZE_NUMBER_INT ) ?? 10 ) );
+		$offset = ( $page - 1 ) * $limit;
+		if( $action_get === 'load' && Utils::validateUID( $uid ) ){
+			Manager::loadItem( $uid );
+		}
+		if( $action_get === 'search' ){
+			Manager::searchItems( $query, $sort, $dir, $page, $limit, $offset );
+		}
+		if( $action_post === 'delete' && Utils::validateUID( $uid ) ){
+			Manager::deleteItem( $uid );
+		}
+		if( $action_post === 'save' && Utils::validateUID( $uid ) ){
+			Manager::saveItem();
+		}
+		print 'backend error';
 	break;
 
 	case 'manager':
