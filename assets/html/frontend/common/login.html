@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+	<script async src="https://www.googletagmanager.com/gtag/js?id=G-V22GRNJ6NK"></script>
+	<script>
+		window.dataLayer = window.dataLayer || [];
+		function gtag(){dataLayer.push(arguments);}
+		gtag('js', new Date());
+		gtag('config', 'G-V22GRNJ6NK');
+	</script>
+	<meta charset="UTF-8">
+	<title><?=$_HTML->Title?> - Login</title>
+	<meta name="description" content="<?=$_HTML->Title?> - Login">
+	<meta name="robots" content="noindex, nofollow">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" type="text/css" href="assets/css/frontend/login.css">
+</head>
+<body>
+	<form class="login-box" method="post" action="login">
+		<h2>Login</h2>
+		<?php if( $_HTML->Response != '' ): ?>
+		<div class="error"><?= htmlspecialchars( $_HTML->Response ) ?></div>
+		<?php endif; ?>
+		<label for="username">Username</label>
+		<input type="text" id="username" name="username" required>
+		<label for="password">Password</label>
+		<input type="password" id="password" name="password" required>
+		<button type="submit">Login</button>
+	</form>
+</body>
+</html>

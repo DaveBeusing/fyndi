@@ -42,6 +42,9 @@ use app\utils\Utils;
 use app\utils\Template;
 use app\dataprovider\Catalog;
 use app\backend\Manager;
+use app\utils\IdentityAccessManagement;
+
+$iam = new IdentityAccessManagement();
 
 switch( filter_input( INPUT_GET, 'view', FILTER_SANITIZE_SPECIAL_CHARS ) ):
 
@@ -81,6 +84,7 @@ switch( filter_input( INPUT_GET, 'view', FILTER_SANITIZE_SPECIAL_CHARS ) ):
 	break;
 
 	case 'backend':
+		$iam->secure( 'Admin' );
 		$action_get = filter_input( INPUT_GET, 'action', FILTER_SANITIZE_SPECIAL_CHARS );
 		$action_post = filter_input( INPUT_POST, 'action', FILTER_SANITIZE_SPECIAL_CHARS );
 		$uid = filter_input( INPUT_GET, 'uid', FILTER_SANITIZE_SPECIAL_CHARS );
@@ -106,6 +110,7 @@ switch( filter_input( INPUT_GET, 'view', FILTER_SANITIZE_SPECIAL_CHARS ) ):
 	break;
 
 	case 'manager':
+		$iam->secure( 'Admin' );
 		Template::view(
 			Config::get()->html->template->backend.'manager.html',
 			[
@@ -115,10 +120,31 @@ switch( filter_input( INPUT_GET, 'view', FILTER_SANITIZE_SPECIAL_CHARS ) ):
 		);
 	break;
 
+	case 'login':
+		if( $_SERVER['REQUEST_METHOD'] === 'POST' ){
+			$username = $_POST['username'] ?? '';
+			$password = $_POST['password'] ?? '';
+			$response = $iam->auth( $username, $password, 'manager' );
+		}
+		Template::view(
+			Config::get()->html->template->path.'login.html',
+			[
+				'Title' => Config::get()->app->name,
+				'Response' => $response ?? '',
+			]
+		);
+	break;
+
+	case 'logout':
+		$iam->deauth();
+	break;
+
 	case 'debug':
 		$uid = Utils::generateUID();
 		$isValid = Utils::validateUID( $uid );
-		print "UID: $uid / isValid: $isValid";
+		print "UID: $uid / isValid: $isValid <br><br>";
+		print "Generated Password: <br> Hash:" .password_hash( '', PASSWORD_DEFAULT) . "<br>";
+		print_r( $_SESSION );
 	break;
 
 	default:

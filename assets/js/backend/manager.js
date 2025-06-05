@@ -68,7 +68,7 @@ export default class manager {
 				const tbody = this.ui.catalogItemsList;
 				tbody.innerHTML = '';
 				data.rows.forEach( row => {
-					const tr = document.createElement('tr');
+					const tr = document.createElement( 'tr' );
 					tr.innerHTML = `
 						<td>${row.uid}</td>
 						<td>${row.title}</td>

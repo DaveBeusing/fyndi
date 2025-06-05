@@ -1,0 +1,75 @@
+/**
+ * Copyright (c) 2025 Dave Beusing <david.beusing@gmail.com>
+ *
+ * MIT License - https://opensource.org/license/mit/
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is furnished
+ * to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+ * INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+ * PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+ * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+ * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ */
+@import url('https://fonts.googleapis.com/css?family=Roboto:100,300,400');
+
+body {
+	font-family: 'Roboto', "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+	background: #f0f2f5;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 100vh;
+	margin: 0;
+}
+.login-box {
+	background: white;
+	padding: 2rem;
+	border-radius: 8px;
+	box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+	width: 100%;
+	max-width: 400px;
+}
+.login-box h2 {
+	margin-top: 0;
+	margin-bottom: 1rem;
+	font-size: 1.5rem;
+	text-align: center;
+}
+.login-box label {
+	display: block;
+	margin-bottom: 0.25rem;
+	font-weight: 600;
+}
+.login-box input {
+	width: 100%;
+	padding: 0.5rem;
+	margin-bottom: 1rem;
+	border-radius: 4px;
+	border: 1px solid #ccc;
+}
+.login-box button {
+	width: 100%;
+	padding: 0.5rem;
+	background: #2563eb;
+	color: white;
+	border: none;
+	border-radius: 4px;
+	font-weight: bold;
+	cursor: pointer;
+}
+.error {
+	color: red;
+	margin-bottom: 1rem;
+	text-align: center;
+}
