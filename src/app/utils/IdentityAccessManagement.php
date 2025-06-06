@@ -30,7 +30,7 @@ use app\database\MySQLPDO;
 
 class IdentityAccessManagement {
 
-	private $Session;
+	private $PDO;
 	private $SessionName;
 	private $SessionLifetime;
 
@@ -66,9 +66,11 @@ class IdentityAccessManagement {
 		if( session_status() === PHP_SESSION_NONE ){
 			session_start();
 		}
+		$this->PDO = new MySQLPDO( Config::get()->db->host, Config::get()->db->database, Config::get()->db->user, Config::get()->db->password, 'utf8mb4' );
+		$this->PDO->setAttribute( \PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION );
 	}
 
-	public function secure( array $allowedRoles ){
+	public function secure( array $allowedRoles ) : void {
 		if( !isset( $_SESSION[ $this->SessionName ] ) || !isset( $_COOKIE[ $this->SessionName ] ) || !$this->validateFingerprint( $_COOKIE[ $this->SessionName ] ) ) {
 			$this->redirect( $this->Locations->login );
 			exit;
@@ -79,7 +81,7 @@ class IdentityAccessManagement {
 		}
 	}
 
-	public function auth( $username, $password, $returnURL ){
+	public function auth( string $username, string $password, string $returnURL ) : string {
 		$user = $this->authenticate( $username, $password );
 		if( $user ){
 			$this->redirect( $returnURL );
@@ -89,7 +91,7 @@ class IdentityAccessManagement {
 		}
 	}
 
-	public function deauth(){
+	public function deauth() : void {
 		setcookie( $this->SessionName, '', time() - ( $this->SessionLifetime + 2 ), "/" );
 		$_SESSION[ $this->SessionName ] = (object) array();
 		session_destroy();
@@ -97,10 +99,25 @@ class IdentityAccessManagement {
 		exit;
 	}
 
-	private function authenticate( $username, $password ){
-		$pdo = new MySQLPDO( Config::get()->db->host, Config::get()->db->database, Config::get()->db->user, Config::get()->db->password, 'utf8mb4' );
-		$pdo->setAttribute( \PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION );
-		$stmt = $pdo->prepare( "SELECT username, password_hash, role FROM users WHERE username = :username" );
+	public function createUser( string $username, string $password, string $role = 'user' ) : bool {
+		if( empty( $username ) || empty( $password ) ) {
+			return false;
+		}
+		$hash = password_hash( $password, PASSWORD_DEFAULT );
+		$stmt = $this->PDO->prepare( "INSERT INTO users (username, password_hash, role) VALUES (:username, :hash, :role)" );
+		$stmt->bindParam( ':username', $username, \PDO::PARAM_STR );
+		$stmt->bindParam( ':hash', $hash, \PDO::PARAM_STR );
+		$stmt->bindParam( ':role', $role, \PDO::PARAM_STR );
+		try {
+			return $stmt->execute();
+		}
+		catch( \PDOException $error ){
+			return false;
+		}
+	}
+
+	private function authenticate( string $username, string $password ) : bool {
+		$stmt = $this->PDO->prepare( "SELECT username, password_hash, role FROM users WHERE username = :username" );
 		$stmt->bindParam( ':username', $username, \PDO::PARAM_STR );
 		$stmt->execute();
 		$user = $stmt->fetch( \PDO::FETCH_ASSOC );
@@ -113,21 +130,21 @@ class IdentityAccessManagement {
 		return false;
 	}
 
-	private function createFingerprint(){
+	private function createFingerprint() : string {
 		return hash( 'sha256', $this->getClientPlatform()->os );
 	}
 
-	private function validateFingerprint( $fingerprint ){
+	private function validateFingerprint( $fingerprint ) : bool {
 		return hash_equals( $fingerprint, $this->createFingerprint() );
 	}
 
-	private function redirect( $target ){
+	private function redirect( $target ) : void {
 		header( 'HTTP/1.1 302 Found' );
 		header( 'Location: ' . $target );
 		exit;
 	}
 
-	private function getClientIP(){
+	private function getClientIP() : string {
 		if( !empty( $_SERVER[ 'HTTP_CLIENT_IP' ] ) ){
 			$ip = $_SERVER[ 'HTTP_CLIENT_IP' ];
 		}
@@ -139,11 +156,11 @@ class IdentityAccessManagement {
 		return $ip;
 	}
 
-	private function getClientUseragent(){
+	private function getClientUseragent() : string {
 		return $_SERVER[ 'HTTP_USER_AGENT' ] ?? false;
 	}
 
-	private function getClientPlatform(){
+	private function getClientPlatform() : object {
 		$useragent = $this->getClientUseragent();
 		$browser = false;
 		$os = false;
