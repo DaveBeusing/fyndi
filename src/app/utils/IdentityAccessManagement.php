@@ -34,11 +34,33 @@ class IdentityAccessManagement {
 	private $SessionName;
 	private $SessionLifetime;
 
+	private $Locations = [
+		'login' => 'login',
+		'logout' => 'logout'
+	];
+
+	private $Platforms = [
+		'browser' => [
+			'Chrome' => '/Chrome\/([0-9.]+)/i',
+			'Firefox' => '/Firefox\/([0-9.]+)/i',
+			'Safari' => '/Safari\/([0-9.]+)/i',
+			'Internet Explorer' => '/MSIE ([0-9.]+)/i',
+			'Edge' => '/Edg\/([0-9.]+)/i'
+		],
+		'os' => [
+			'Windows 10' => '/Windows NT 10.0/i',
+			'macOS' => '/Mac OS X/i',
+			'Linux' => '/Linux/i',
+			'Android' => '/Android/i',
+			'iOS' => '/iPhone|iPad/i'
+		]
+	];
 
 	public function __construct( $session_name = 'iam', $session_lifetime = 3600 ){
 		$this->SessionName = $session_name;
 		$this->SessionLifetime = $session_lifetime;
-
+		$this->Platforms = json_decode( json_encode( $this->Platforms ) );
+		$this->Locations = (object) $this->Locations;
 		session_name( $this->SessionName );
 		session_set_cookie_params( $this->SessionLifetime );
 		if( session_status() === PHP_SESSION_NONE ){
@@ -47,22 +69,21 @@ class IdentityAccessManagement {
 	}
 
 	public function secure( $requiredRole = 'Admin', $return_url = false ){
-		if( !isset( $_SESSION[$this->SessionName] ) ) {
-			header('Location: login');
+		if( !isset( $_SESSION[ $this->SessionName ] ) || !isset( $_COOKIE[ $this->SessionName ] ) || !$this->validateFingerprint( $_COOKIE[ $this->SessionName ] ) ) {
+			$this->redirect( $this->Locations->login );
 			exit;
 		}
-		if( !isset( $_SESSION[$this->SessionName] ) || $_SESSION[$this->SessionName]['role'] !== $requiredRole ){
+		if( !isset( $_SESSION[ $this->SessionName ] ) || $_SESSION[ $this->SessionName ]->role !== $requiredRole ){
 			http_response_code(403);
 			echo "Access denied -> required Role: ".$requiredRole;
 			exit;
 		}
 	}
 
-	public function auth( $username, $password, $return_url ){
+	public function auth( $username, $password, $returnURL ){
 		$user = $this->authenticate( $username, $password );
 		if( $user ){
-			$_SESSION[$this->SessionName] = $user;
-			header( "Location: ".$return_url );
+			$this->redirect( $returnURL );
 			exit;
 		} else {
 			return 'Benutzername oder Passwort falsch.';
@@ -70,9 +91,10 @@ class IdentityAccessManagement {
 	}
 
 	public function deauth(){
-		$_SESSION[$this->SessionName] = array();
+		setcookie( $this->SessionName, '', time() - ( $this->SessionLifetime + 2 ), "/" );
+		$_SESSION[ $this->SessionName ] = (object) array();
 		session_destroy();
-		header('Location: login');
+		$this->redirect( $this->Locations->login );
 		exit;
 	}
 
@@ -83,11 +105,66 @@ class IdentityAccessManagement {
 		$stmt->bindParam( ':username', $username, \PDO::PARAM_STR );
 		$stmt->execute();
 		$user = $stmt->fetch( \PDO::FETCH_ASSOC );
-		if( $user && password_verify( $password, $user['password_hash'] ) ){
-			return [ 'name' => $user['username'], 'role' => $user['role'] ];
+		if( $user && password_verify( $password, $user[ 'password_hash' ] ) ){
+			$hash = $this->createFingerprint();
+			setcookie( $this->SessionName, $hash, time() + $this->SessionLifetime, "/" );
+			$_SESSION[ $this->SessionName ] = (object) [ 'name' => $user[ 'username' ], 'role' => $user[ 'role' ], 'hash' => $hash ];
+			return true;
 		}
 		return false;
 	}
 
+	private function createFingerprint(){
+		return hash( 'sha256', $this->getClientPlatform()->os );
+	}
+
+	private function validateFingerprint( $fingerprint ){
+		return hash_equals( $fingerprint, $this->createFingerprint() );
+	}
+
+	private function redirect( $target ){
+		header( 'HTTP/1.1 302 Found' );
+		header( 'Location: ' . $target );
+		exit;
+	}
+
+	private function getClientIP(){
+		if( !empty( $_SERVER[ 'HTTP_CLIENT_IP' ] ) ){
+			$ip = $_SERVER[ 'HTTP_CLIENT_IP' ];
+		}
+		elseif( !empty( $_SERVER[ 'HTTP_X_FORWARDED_FOR' ] ) ){
+			$ip = explode( ',', $_SERVER[ 'HTTP_X_FORWARDED_FOR' ] )[0];
+		} else {
+			$ip = $_SERVER[ 'REMOTE_ADDR' ];
+		}
+		return $ip;
+	}
+
+	private function getClientUseragent(){
+		return $_SERVER[ 'HTTP_USER_AGENT' ] ?? false;
+	}
+
+	private function getClientPlatform(){
+		$useragent = $this->getClientUseragent();
+		$browser = false;
+		$os = false;
+		if( $useragent ){
+			foreach( $this->Platforms->browser as $platform => $pattern ){
+				if( preg_match( $pattern, $useragent ) ){
+					$browser = $platform;
+				}
+			}
+			foreach( $this->Platforms->os as $platform => $pattern ){
+				if( preg_match( $pattern, $useragent ) ){
+					$os = $platform;
+				}
+			}
+		}
+		return (object) [
+			'useragent' => $useragent,
+			'browser' => $browser,
+			'os' => $os
+		];
+	}
 }
 ?>

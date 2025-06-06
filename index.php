@@ -145,6 +145,8 @@ switch( filter_input( INPUT_GET, 'view', FILTER_SANITIZE_SPECIAL_CHARS ) ):
 		print "UID: $uid / isValid: $isValid <br><br>";
 		print "Generated Password: <br> Hash:" .password_hash( '', PASSWORD_DEFAULT) . "<br>";
 		print_r( $_SESSION );
+		print '<br>';
+		$iam->debug();
 	break;
 
 	default:
