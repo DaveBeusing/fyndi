@@ -130,6 +130,7 @@ switch( filter_input( INPUT_GET, 'view', FILTER_SANITIZE_SPECIAL_CHARS ) ):
 			Config::get()->html->template->path.'login.html',
 			[
 				'Title' => Config::get()->app->name,
+				'URL' => Config::get()->app->url,
 				'Response' => $response ?? '',
 			]
 		);

@@ -59,8 +59,10 @@ body {
 	border: 1px solid #ccc;
 }
 .login-box button {
-	width: 100%;
+	display: block;
+	width: 50%;
 	padding: 0.5rem;
+	margin: 0 auto;
 	background: #2563eb;
 	color: white;
 	border: none;

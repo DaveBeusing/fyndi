@@ -26,7 +26,7 @@ export default class manager {
 	constructor( debug=false ){
 		this.debug = debug;
 		this.app ={
-			baseURL : 'https://bsng.eu/app/fyndi/'
+			baseURL : 'https://bsng.eu/app/fyndi'
 		};
 		this.ui = {
 			searchInput : this.$( '#search-input' ),
@@ -62,7 +62,7 @@ export default class manager {
 	loadEntries( query = '', page = 1 ) {
 		this.currentQuery = query;
 		this.currentPage = page;
-		fetch(`backend?action=search&query=${encodeURIComponent(query)}&sort=${this.sortBy}&dir=${this.sortDir}&page=${page}&limit=${this.rowsPerPage}`)
+		fetch(`${this.app.baseURL}/api/backend?action=search&query=${encodeURIComponent(query)}&sort=${this.sortBy}&dir=${this.sortDir}&page=${page}&limit=${this.rowsPerPage}`)
 			.then( r => r.json() )
 			.then( data => {
 				const tbody = this.ui.catalogItemsList;
@@ -85,7 +85,7 @@ export default class manager {
 			});
 	}
 	editEntry( uid ) {
-		fetch( 'backend?action=load&uid=' + encodeURIComponent( uid ) )
+		fetch( `${this.app.baseURL}/api/backend?action=load&uid=${encodeURIComponent( uid )}` )
 			.then( r => r.json() )
 			.then( data => this.fillForm( data ) );
 	}
@@ -94,7 +94,7 @@ export default class manager {
 	}
 	deleteEntry() {
 		if( !confirm( 'Wirklich löschen?' ) ) return;
-		fetch('backend', {
+		fetch( `${this.app.baseURL}/api/backend`, {
 		  method: 'POST',
 		  headers: {'Content-Type': 'application/json'},
 		  body: JSON.stringify({ action: 'delete', uid: this.ui.catalogItemForm.uid.value })
@@ -202,7 +202,7 @@ export default class manager {
 			event.preventDefault();
 			const data = {};
 			new FormData( this.ui.catalogItemForm ).forEach( ( val, key ) => data[key] = val );
-			fetch( 'backend', {
+			fetch( `${this.app.baseURL}/api/backend`, {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify( data )
