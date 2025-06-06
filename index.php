@@ -84,7 +84,7 @@ switch( filter_input( INPUT_GET, 'view', FILTER_SANITIZE_SPECIAL_CHARS ) ):
 	break;
 
 	case 'backend':
-		$iam->secure( 'Admin' );
+		$iam->secure( [ 'Admin' ] );
 		$action_get = filter_input( INPUT_GET, 'action', FILTER_SANITIZE_SPECIAL_CHARS );
 		$action_post = filter_input( INPUT_POST, 'action', FILTER_SANITIZE_SPECIAL_CHARS );
 		$uid = filter_input( INPUT_GET, 'uid', FILTER_SANITIZE_SPECIAL_CHARS );
@@ -110,7 +110,7 @@ switch( filter_input( INPUT_GET, 'view', FILTER_SANITIZE_SPECIAL_CHARS ) ):
 	break;
 
 	case 'manager':
-		$iam->secure( 'Admin' );
+		$iam->secure( [ 'Admin' ] );
 		Template::view(
 			Config::get()->html->template->backend.'manager.html',
 			[
@@ -140,13 +140,14 @@ switch( filter_input( INPUT_GET, 'view', FILTER_SANITIZE_SPECIAL_CHARS ) ):
 	break;
 
 	case 'debug':
+		$iam->secure( [ 'Admin', 'Editor' ] );
 		$uid = Utils::generateUID();
 		$isValid = Utils::validateUID( $uid );
 		print "UID: $uid / isValid: $isValid <br><br>";
 		print "Generated Password: <br> Hash:" .password_hash( '', PASSWORD_DEFAULT) . "<br>";
 		print_r( $_SESSION );
 		print '<br>';
-		$iam->debug();
+
 	break;
 
 	default:

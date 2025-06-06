@@ -68,14 +68,13 @@ class IdentityAccessManagement {
 		}
 	}
 
-	public function secure( $requiredRole = 'Admin', $return_url = false ){
+	public function secure( array $allowedRoles ){
 		if( !isset( $_SESSION[ $this->SessionName ] ) || !isset( $_COOKIE[ $this->SessionName ] ) || !$this->validateFingerprint( $_COOKIE[ $this->SessionName ] ) ) {
 			$this->redirect( $this->Locations->login );
 			exit;
 		}
-		if( !isset( $_SESSION[ $this->SessionName ] ) || $_SESSION[ $this->SessionName ]->role !== $requiredRole ){
+		if( !in_array( $_SESSION[ $this->SessionName ]->role, $allowedRoles ) ){
 			http_response_code(403);
-			echo "Access denied -> required Role: ".$requiredRole;
 			exit;
 		}
 	}
