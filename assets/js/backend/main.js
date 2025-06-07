@@ -21,7 +21,7 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-import manager from './manager.js';
+import CatalogManager from './CatalogManager.js';
 /**
  * 
  */
@@ -29,11 +29,17 @@ window.addEventListener( 'load', function(){
 	const debug = true;
 	const loading = document.getElementById( 'loading' );
 	loading.style.display = 'none';
-	if( debug ){
-		window.manager = new manager( true );
-		window.manager.run();
+	if( this.window.location.href.indexOf( 'manager' ) ){
+		console.info( `load CatalogManager Debug:${debug}` );
+		if( debug ){
+			window.CatalogManager = new CatalogManager( true );
+			window.CatalogManager.run();
+		}
+		else {
+			new CatalogManager().run();
+		}
 	}
-	else {
-		new manager().run();
-	}
+
+
+
 });

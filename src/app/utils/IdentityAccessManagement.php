@@ -124,6 +124,7 @@ class IdentityAccessManagement {
 		if( $user && password_verify( $password, $user[ 'password_hash' ] ) ){
 			$hash = $this->createFingerprint();
 			setcookie( $this->SessionName, $hash, time() + $this->SessionLifetime, "/" );
+			$_COOKIE[ $this->SessionName ] = $hash;
 			$_SESSION[ $this->SessionName ] = (object) [ 'name' => $user[ 'username' ], 'role' => $user[ 'role' ], 'hash' => $hash ];
 			return true;
 		}

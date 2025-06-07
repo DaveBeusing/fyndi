@@ -22,7 +22,7 @@
  *
  */
 
-export default class manager {
+export default class CatalogManager {
 	constructor( debug=false ){
 		this.debug = debug;
 		this.app ={
