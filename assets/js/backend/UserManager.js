@@ -21,32 +21,44 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-window.addEventListener( 'load', function(){
-	const debug = true;
-	const url = window.location.href;
-	document.getElementById( 'loading' ).style.display = 'none';
-	if( url.includes( "/catalog" ) ){
-		 import( './CatalogManager.js' )
-			.then( module => {
-				const CatalogManager = module.default;
-				const manager = new CatalogManager( debug );
-				manager.init();
-				console.info( `Initialized CatalogManager Debug:${debug}` );
-			})
-			.catch( error => {
-				console.error( "Failed to load CatalogManager:", error );
-			});
+
+export default class UserManager {
+	constructor( debug=flase ){
+		this.debug = debug;
+		this.app ={
+			baseURL : 'https://bsng.eu/app/fyndi'
+		};
+		this.ui = {
+			userTable : this.$( '#userTable' )
+		};
 	}
-	if( url.includes( "/user" ) ){
-		 import( './UserManager.js' )
-			.then( module => {
-				const UserManager = module.default;
-				const manager = new UserManager( debug );
-				manager.init();
-				console.info( `Initialized UserManager Debug:${debug}` );
-			})
-			.catch( error => {
-				console.error( "Failed to load UserManager:", error );
-			});
+	$( element ){
+		return document.querySelector( element );
 	}
-});
+	fetchUsers(){
+		fetch( `${this.app.baseURL}/api/backend?action=users` )
+			.then( response => response.json() )
+			.then( data => {
+				const tbody = this.ui.userTable;
+				tbody.innerHTML = '';
+				data.users.forEach( user => {
+					const tr = document.createElement( 'tr' );
+					tr.innerHTML = `
+						<td>${user.id}</td>
+						<td>${user.username}</td>
+						<td>
+							<select class="user-role" data-id="${user.id}">
+							<option value="user" ${user.role === 'user' ? 'selected' : ''}>User</option>
+							<option value="editor" ${user.role === 'editor' ? 'selected' : ''}>Editor</option>
+							<option value="admin" ${user.role === 'admin' ? 'selected' : ''}>Admin</option>
+							</select>
+						</td>
+					`;
+					tbody.appendChild( tr );
+				} );
+			} );
+	}
+	init(){
+		this.fetchUsers();
+	}
+}

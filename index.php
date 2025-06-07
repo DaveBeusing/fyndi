@@ -106,13 +106,32 @@ switch( filter_input( INPUT_GET, 'view', FILTER_SANITIZE_SPECIAL_CHARS ) ):
 		if( $action_post === 'save' && Utils::validateUID( $uid ) ){
 			Manager::saveItem();
 		}
-		print 'backend error';
+		if( $action_get === 'users' ){
+			$users = $iam->loadUsers();
+			if( $users ){
+				print json_encode( [ 'success' => true, 'users' => $users ] );
+				exit;
+			}
+		}
+		print json_encode( ['success' => false, 'error' => 'Keine Berechtigung.'] );
+		exit;
 	break;
 
-	case 'manager':
+	case 'catalog':
 		$iam->secure( [ 'Admin' ] );
 		Template::view(
-			Config::get()->html->template->backend.'manager.html',
+			Config::get()->html->template->backend.'catalog-manager.html',
+			[
+				'Title' => Config::get()->app->name,
+				'URL' => Config::get()->app->url
+			]
+		);
+	break;
+
+	case 'user':
+		$iam->secure( [ 'Admin' ] );
+		Template::view(
+			Config::get()->html->template->backend.'user-manager.html',
 			[
 				'Title' => Config::get()->app->name,
 				'URL' => Config::get()->app->url
@@ -124,7 +143,7 @@ switch( filter_input( INPUT_GET, 'view', FILTER_SANITIZE_SPECIAL_CHARS ) ):
 		if( $_SERVER['REQUEST_METHOD'] === 'POST' ){
 			$username = $_POST['username'] ?? '';
 			$password = $_POST['password'] ?? '';
-			$response = $iam->auth( $username, $password, 'manager' );
+			$response = $iam->auth( $username, $password, 'catalog' );
 		}
 		Template::view(
 			Config::get()->html->template->path.'login.html',

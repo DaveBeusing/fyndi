@@ -116,6 +116,16 @@ class IdentityAccessManagement {
 		}
 	}
 
+	public function loadUsers(){
+		$stmt = $this->PDO->query( "SELECT id, username, role FROM users ORDER BY id ASC" );
+		$stmt->execute();
+		$users = $stmt->fetchAll( \PDO::FETCH_ASSOC );
+		if( $users ){
+			return $users;
+		}
+		return false;
+	}
+
 	private function authenticate( string $username, string $password ) : bool {
 		$stmt = $this->PDO->prepare( "SELECT username, password_hash, role FROM users WHERE username = :username" );
 		$stmt->bindParam( ':username', $username, \PDO::PARAM_STR );
@@ -123,9 +133,9 @@ class IdentityAccessManagement {
 		$user = $stmt->fetch( \PDO::FETCH_ASSOC );
 		if( $user && password_verify( $password, $user[ 'password_hash' ] ) ){
 			$hash = $this->createFingerprint();
-			setcookie( $this->SessionName, $hash, time() + $this->SessionLifetime, "/" );
 			$_COOKIE[ $this->SessionName ] = $hash;
 			$_SESSION[ $this->SessionName ] = (object) [ 'name' => $user[ 'username' ], 'role' => $user[ 'role' ], 'hash' => $hash ];
+			setcookie( $this->SessionName, $hash, time() + $this->SessionLifetime, "/" );
 			return true;
 		}
 		return false;

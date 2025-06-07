@@ -179,7 +179,7 @@ export default class CatalogManager {
 			}
 		}
 	}
-	run(){
+	init(){
 		this.loadEntries();
 
 		this.ui.searchInput.addEventListener( 'input', event => {
@@ -221,7 +221,6 @@ export default class CatalogManager {
 				this.setSort( val, this.$(`#sort-${val}`) );
 			} );
 		} );
-		/* onclick="setSort('stock', this)" */
 
 	}
 }
