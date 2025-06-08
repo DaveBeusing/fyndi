@@ -57,8 +57,21 @@ a.logout {
 
 main {
 	padding: 2rem;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
 }
 
 h3 {
 	margin-top: 0;
+}
+
+#chart-container {
+	width: 100%;
+	max-width: 800px;
+	margin: 1rem auto;
+}
+#chart-container canvas {
+	width: 100% !important;
+	height: auto !important;
 }

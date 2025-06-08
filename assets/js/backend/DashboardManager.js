@@ -56,6 +56,61 @@ export default class DashboardManager {
 						${data.availability_dist.map(a => `<li>Status ${a.availability}: ${a.count}</li>`).join('')}
 					</ul>
 				`;
+
+				// Categories
+				const catLabels = data.top_categories.map(c => c.category1);
+				const catCounts = data.top_categories.map(c => c.count);
+
+				new Chart( this.$( '#categoryChart' ), {
+					type: 'bar',
+					data: {
+						labels: catLabels,
+						datasets: [{
+							label: 'Products per Category',
+							data: catCounts,
+							backgroundColor: 'rgba(59, 130, 246, 0.6)',
+							borderColor: 'rgba(37, 99, 235, 1)',
+							borderWidth: 1
+						}]
+					},
+					options: {
+						responsive: true,
+						plugins: {
+						legend: { display: false }
+						},
+						scales: {
+							y: {
+								beginAtZero: true,
+								ticks: { precision: 0 }
+							}
+						}
+					}
+				});
+
+				// Availability
+				const availLabels = data.availability_dist.map(a => 'Status ' + a.availability);
+				const availCounts = data.availability_dist.map(a => a.count);
+
+				new Chart( this.$( '#availabilityChart' ), {
+					type: 'pie',
+					data: {
+						labels: ['Out-of-Stock', 'Available', 'Incoming'],
+						datasets: [{
+							label: 'Availability',
+							data: availCounts,
+							backgroundColor: [
+								'rgba(239,68,68,0.6)',
+								'rgba(34,197,94,0.6)',
+								'rgba(234,179,8,0.6)',
+								'rgba(59,130,246,0.6)'
+							]
+						}]
+					},
+					options: {
+						responsive: true
+					}
+				});
+
 			} )
 			.catch( error => {
 				this.$( '#catalog-metrics' ).innerText = 'Failed loading catalog metrics';

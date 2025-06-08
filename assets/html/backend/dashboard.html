@@ -7,6 +7,7 @@
 	<meta name="robots" content="noindex, nofollow">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="stylesheet" type="text/css" href="<?=$_HTML->URL?>/assets/css/backend/dashboard.css">
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 <body>
@@ -22,6 +23,11 @@
 		<div class="dashboard-metrics">
 			<h2>Catalog Metrics</h2>
 			<div id="catalog-metrics">load Data...</div>
+			<h3>Charts</h3>
+			<div id="chart-container">
+				<canvas id="categoryChart" width="400px" height="200px"></canvas>
+				<canvas id="availabilityChart" width="400px" height="200px"></canvas>
+			</div>
 		</div>
 	</main>
 	<span id="loading">Loading...</span>
