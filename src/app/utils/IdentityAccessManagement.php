@@ -127,18 +127,35 @@ class IdentityAccessManagement {
 	}
 
 	private function authenticate( string $username, string $password ) : bool {
-		$stmt = $this->PDO->prepare( "SELECT username, password_hash, role FROM users WHERE username = :username" );
+		$stmt = $this->PDO->prepare( "SELECT id, username, password_hash, role FROM users WHERE username = :username" );
 		$stmt->bindParam( ':username', $username, \PDO::PARAM_STR );
 		$stmt->execute();
 		$user = $stmt->fetch( \PDO::FETCH_ASSOC );
-		if( $user && password_verify( $password, $user[ 'password_hash' ] ) ){
-			$hash = $this->createFingerprint();
-			$_COOKIE[ $this->SessionName ] = $hash;
-			$_SESSION[ $this->SessionName ] = (object) [ 'name' => $user[ 'username' ], 'role' => $user[ 'role' ], 'hash' => $hash ];
-			setcookie( $this->SessionName, $hash, time() + $this->SessionLifetime, "/" );
-			return true;
+		if( $user ){
+			if( password_verify( $password, $user[ 'password_hash' ] ) ){
+				$hash = $this->createFingerprint();
+				$_COOKIE[ $this->SessionName ] = $hash;
+				$_SESSION[ $this->SessionName ] = (object) [ 'name' => $user[ 'username' ], 'role' => $user[ 'role' ], 'hash' => $hash ];
+				setcookie( $this->SessionName, $hash, time() + $this->SessionLifetime, "/" );
+				$this->logLogin( $user['id'], 1 );
+				return true;
+			}
+			else{
+				$this->logLogin( $user['id'], 0 );
+			}
 		}
 		return false;
+	}
+
+	private function logLogin( int $uid, int $success ) : void {
+		$ip = ip2long( $this->getClientIP() );
+		$agent = $this->getClientUseragent() ?? 'Unknown';
+		$stmt = $this->PDO->prepare( "INSERT INTO iam_logins ( uid, success, ip_address, user_agent ) VALUES ( :uid, :success, :ip, :agent )" );
+		$stmt->bindParam( ':uid', $uid, \PDO::PARAM_INT );
+		$stmt->bindParam( ':success', $success, \PDO::PARAM_INT );
+		$stmt->bindParam( ':ip', $ip, \PDO::PARAM_INT );
+		$stmt->bindParam( ':agent', $agent, \PDO::PARAM_STR );
+		$stmt->execute();
 	}
 
 	private function createFingerprint() : string {

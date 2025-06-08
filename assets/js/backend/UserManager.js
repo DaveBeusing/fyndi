@@ -58,7 +58,32 @@ export default class UserManager {
 				} );
 			} );
 	}
+	createUser(){
+		const formData = new FormData( this.$( '#createUserForm' ) );
+		formData.append( 'action', 'createuser' );
+		fetch( `${this.app.baseURL}/api/backend`, {
+			method: 'POST',
+			body: formData
+		} )
+		.then( response => response.json() )
+		.then( data => {
+			const msg = this.$( '#userMessage' );
+			if( data.success ){
+				msg.textContent = 'Benutzer erfolgreich erstellt';
+				msg.style.color = '#065f46';
+				this.fetchUsers();
+			}
+			else {
+				msg.textContent = data.error || 'Fehler beim Erstellen';
+				msg.style.color = '#b91c1c';
+			}
+		});
+	}
 	init(){
 		this.fetchUsers();
+		this.$( '#createUserForm' ).addEventListener( 'submit', event => {
+			event.preventDefault();
+			this.createUser();
+		} );
 	}
 }

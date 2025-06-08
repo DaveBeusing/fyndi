@@ -113,6 +113,14 @@ switch( filter_input( INPUT_GET, 'view', FILTER_SANITIZE_SPECIAL_CHARS ) ):
 				exit;
 			}
 		}
+		if( $action_post === 'createuser' ){
+			$username = trim( filter_input( INPUT_POST, 'username', FILTER_SANITIZE_SPECIAL_CHARS ) ?? '' );
+			$password = filter_input( INPUT_POST, 'password', FILTER_SANITIZE_SPECIAL_CHARS ) ?? '';
+			$role = filter_input( INPUT_POST, 'role', FILTER_SANITIZE_SPECIAL_CHARS ) ?? 'user';
+			$success = $iam->createUser( $username, $password, $role );
+			print json_encode( ['success' => $success] );
+			exit;
+		}
 		print json_encode( ['success' => false, 'error' => 'Keine Berechtigung.'] );
 		exit;
 	break;
