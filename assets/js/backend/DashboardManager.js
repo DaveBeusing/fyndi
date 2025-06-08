@@ -66,7 +66,11 @@ export default class DashboardManager {
 					</ul>
 					<h3>Top-Categories</h3>
 					<ul>
-						${data.top_categories.map(c => `<li>${c.category1} (${c.count})</li>`).join('')}
+						${data.top_categories.map(c => `<li>${c.category1} (${c.count}) ${this.calculatePercentage( data.total, c.count )}%</li>`).join('')}
+					</ul>
+					<h3>Top-Manufacturers</h3>
+					<ul>
+						${data.top_manufacturers.map(c => `<li>${c.manufacturer} (${c.count}) ${this.calculatePercentage( data.total, c.count )}%</li>`).join('')}
 					</ul>
 					<h3>Availability</h3>
 					<ul>

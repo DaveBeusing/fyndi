@@ -242,6 +242,15 @@ class Catalog {
 		");
 		$stats['top_categories'] = $stmt->fetchAll( \PDO::FETCH_ASSOC );
 		$stmt = $pdo->query("
+			SELECT manufacturer, COUNT(*) as count 
+			FROM catalog 
+			WHERE manufacturer IS NOT NULL AND manufacturer != '' 
+			GROUP BY manufacturer 
+			ORDER BY count DESC 
+			LIMIT 10
+		");
+		$stats['top_manufacturers'] = $stmt->fetchAll( \PDO::FETCH_ASSOC );
+		$stmt = $pdo->query("
 			SELECT availability, COUNT(*) as count 
 			FROM catalog 
 			GROUP BY availability 
