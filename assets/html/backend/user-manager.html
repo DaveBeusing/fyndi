@@ -9,10 +9,14 @@
 	<link rel="stylesheet" type="text/css" href="<?=$_HTML->URL?>/assets/css/backend/user-manager.css">
 </head>
 <body>
-<header>
-	<h1>User Manager</h1>
-	<a class="logout" href="<?=$_HTML->URL?>/backend/logout">Logout</a>
-</header>
+	<nav>
+		<div>
+			<a href="<?=$_HTML->URL?>/backend/dashboard">Dashboard</a>
+			<a href="<?=$_HTML->URL?>/backend/catalog">Catalog</a>
+			<a href="<?=$_HTML->URL?>/backend/user">User</a>
+		</div>
+		<a class="logout" href="<?=$_HTML->URL?>/backend/logout">Logout</a>
+	</nav>
 	<main>
 		<form class="user-form" id="createUserForm">
 			<h2>Create User</h2>

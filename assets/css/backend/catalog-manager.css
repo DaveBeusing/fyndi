@@ -29,6 +29,31 @@ body {
 	background-color: #f4f6f8;
 }
 
+nav {
+	background-color: #1f2937; 
+	color: white;
+	padding: 1rem 2rem;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+nav a {
+	color: white;
+	text-decoration: none;
+	padding: 0.5rem 1rem;
+	border-radius: 4px;
+	background: #4b5563;
+}
+
+a.logout {
+	color: white;
+	text-decoration: none;
+	background-color: #ef4444;
+	padding: 0.5rem 1rem;
+	border-radius: 4px;
+}
+
 header {
 	background-color: #1f2937; 
 	color: white;

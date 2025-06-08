@@ -113,6 +113,9 @@ switch( filter_input( INPUT_GET, 'view', FILTER_SANITIZE_SPECIAL_CHARS ) ):
 				exit;
 			}
 		}
+		if( $action_get === 'metrics' ){
+			Catalog::getMetrics();
+		}
 		if( $action_post === 'createuser' ){
 			$email = trim( filter_input( INPUT_POST, 'email', FILTER_SANITIZE_SPECIAL_CHARS ) ?? '' );
 			$password = filter_input( INPUT_POST, 'password', FILTER_SANITIZE_SPECIAL_CHARS ) ?? '';
@@ -127,6 +130,17 @@ switch( filter_input( INPUT_GET, 'view', FILTER_SANITIZE_SPECIAL_CHARS ) ):
 		}
 		print json_encode( ['success' => false, 'error' => 'Keine Berechtigung.'] );
 		exit;
+	break;
+
+	case 'dashboard':
+		$iam->secure( [ 'admin' ] );
+		Template::view(
+			Config::get()->html->template->backend.'dashboard.html',
+			[
+				'Title' => Config::get()->app->name,
+				'URL' => Config::get()->app->url
+			]
+		);
 	break;
 
 	case 'catalog':
@@ -155,7 +169,7 @@ switch( filter_input( INPUT_GET, 'view', FILTER_SANITIZE_SPECIAL_CHARS ) ):
 		if( $_SERVER['REQUEST_METHOD'] === 'POST' ){
 			$username = $_POST['username'] ?? '';
 			$password = $_POST['password'] ?? '';
-			$response = $iam->auth( $username, $password, 'catalog' );
+			$response = $iam->auth( $username, $password, 'dashboard' );
 		}
 		Template::view(
 			Config::get()->html->template->path.'login.html',

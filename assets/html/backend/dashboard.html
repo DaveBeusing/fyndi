@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+	<meta charset="UTF-8">
+	<title>Dashboard</title>
+	<meta name="description" content="Dashboard">
+	<meta name="robots" content="noindex, nofollow">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" type="text/css" href="<?=$_HTML->URL?>/assets/css/backend/dashboard.css">
+</head>
+<body>
+<body>
+	<nav>
+		<div>
+			<a href="<?=$_HTML->URL?>/backend/dashboard">Dashboard</a>
+			<a href="<?=$_HTML->URL?>/backend/catalog">Catalog</a>
+			<a href="<?=$_HTML->URL?>/backend/user">User</a>
+		</div>
+		<a class="logout" href="<?=$_HTML->URL?>/backend/logout">Logout</a>
+	</nav>
+	<main>
+		<div class="dashboard-metrics">
+			<h2>Catalog Metrics</h2>
+			<div id="catalog-metrics">load Data...</div>
+		</div>
+	</main>
+	<span id="loading">Loading...</span>
+	<script type="module" src="<?=$_HTML->URL?>/assets/js/backend/main.js"></script>
+</body>
+</html>

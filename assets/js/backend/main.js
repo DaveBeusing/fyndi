@@ -25,6 +25,18 @@ window.addEventListener( 'load', function(){
 	const debug = true;
 	const url = window.location.href;
 	document.getElementById( 'loading' ).style.display = 'none';
+	if( url.includes( "/dashboard" ) ){
+		 import( './DashboardManager.js' )
+			.then( module => {
+				const DashboardManager = module.default;
+				const manager = new DashboardManager( debug );
+				manager.init();
+				console.info( `Initialized DashboardManager Debug:${debug}` );
+			})
+			.catch( error => {
+				console.error( "Failed to load DashboardManager:", error );
+			});
+	}
 	if( url.includes( "/catalog" ) ){
 		 import( './CatalogManager.js' )
 			.then( module => {

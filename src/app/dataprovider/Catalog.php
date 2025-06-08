@@ -208,5 +208,40 @@ class Catalog {
 		}
 	}
 
+	public static function getMetrics() : void {
+		$pdo = new MySQLPDO( Config::get()->db->host, Config::get()->db->database, Config::get()->db->user, Config::get()->db->password, 'utf8mb4' );
+		$pdo->setAttribute( \PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION );
+		$stats = [];
+		// Grundkennzahlen
+		$stats['total'] = $pdo->query("SELECT COUNT(*) FROM catalog")->fetchColumn();
+		$stats['stocked'] = $pdo->query("SELECT COUNT(*) FROM catalog WHERE stock > 0")->fetchColumn();
+		$stats['eol'] = $pdo->query("SELECT COUNT(*) FROM catalog WHERE iseol = 1")->fetchColumn();
+		$stats['unavailable'] = $pdo->query("SELECT COUNT(*) FROM catalog WHERE availability = 0")->fetchColumn();
+		$stats['avg_price'] = $pdo->query("SELECT ROUND(AVG(price),2) FROM catalog WHERE price > 0")->fetchColumn();
+		$stats['total_stock_value'] = $pdo->query("SELECT ROUND(SUM(price * stock),2) FROM catalog WHERE price > 0")->fetchColumn();
+		$stats['created_7d'] = $pdo->query("SELECT COUNT(*) FROM catalog WHERE created >= NOW() - INTERVAL 7 DAY")->fetchColumn();
+		$stats['avg_weight'] = $pdo->query("SELECT ROUND(AVG(weight),3) FROM catalog WHERE weight > 0")->fetchColumn();
+		$stats['avg_volweight'] = $pdo->query("SELECT ROUND(AVG(volweight),3) FROM catalog WHERE volweight > 0")->fetchColumn();
+		$stmt = $pdo->query("
+			SELECT category1, COUNT(*) as count 
+			FROM catalog 
+			WHERE category1 IS NOT NULL AND category1 != '' 
+			GROUP BY category1 
+			ORDER BY count DESC 
+			LIMIT 5
+		");
+		$stats['top_categories'] = $stmt->fetchAll( \PDO::FETCH_ASSOC );
+
+		$stmt = $pdo->query("
+			SELECT availability, COUNT(*) as count 
+			FROM catalog 
+			GROUP BY availability 
+			ORDER BY count DESC
+		");
+		$stats['availability_dist'] = $stmt->fetchAll( \PDO::FETCH_ASSOC );
+		print json_encode( $stats );
+		exit;
+	}
+
 }
 ?>
