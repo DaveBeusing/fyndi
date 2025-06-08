@@ -84,7 +84,7 @@ switch( filter_input( INPUT_GET, 'view', FILTER_SANITIZE_SPECIAL_CHARS ) ):
 	break;
 
 	case 'backend':
-		$iam->secure( [ 'Admin' ] );
+		$iam->secure( [ 'admin' ] );
 		$action_get = filter_input( INPUT_GET, 'action', FILTER_SANITIZE_SPECIAL_CHARS );
 		$action_post = filter_input( INPUT_POST, 'action', FILTER_SANITIZE_SPECIAL_CHARS );
 		$uid = filter_input( INPUT_GET, 'uid', FILTER_SANITIZE_SPECIAL_CHARS );
@@ -114,19 +114,23 @@ switch( filter_input( INPUT_GET, 'view', FILTER_SANITIZE_SPECIAL_CHARS ) ):
 			}
 		}
 		if( $action_post === 'createuser' ){
-			$username = trim( filter_input( INPUT_POST, 'username', FILTER_SANITIZE_SPECIAL_CHARS ) ?? '' );
+			$email = trim( filter_input( INPUT_POST, 'email', FILTER_SANITIZE_SPECIAL_CHARS ) ?? '' );
 			$password = filter_input( INPUT_POST, 'password', FILTER_SANITIZE_SPECIAL_CHARS ) ?? '';
 			$role = filter_input( INPUT_POST, 'role', FILTER_SANITIZE_SPECIAL_CHARS ) ?? 'user';
-			$success = $iam->createUser( $username, $password, $role );
+			$success = $iam->createUser( $email, $password, $role );
 			print json_encode( ['success' => $success] );
 			exit;
+		}
+		if( $action_post === 'userlogins' ){
+			$uid = filter_input( INPUT_POST, 'uid', FILTER_SANITIZE_NUMBER_INT );
+			$iam->getUserLogins( $uid );
 		}
 		print json_encode( ['success' => false, 'error' => 'Keine Berechtigung.'] );
 		exit;
 	break;
 
 	case 'catalog':
-		$iam->secure( [ 'Admin' ] );
+		$iam->secure( [ 'admin' ] );
 		Template::view(
 			Config::get()->html->template->backend.'catalog-manager.html',
 			[
@@ -137,7 +141,7 @@ switch( filter_input( INPUT_GET, 'view', FILTER_SANITIZE_SPECIAL_CHARS ) ):
 	break;
 
 	case 'user':
-		$iam->secure( [ 'Admin' ] );
+		$iam->secure( [ 'admin' ] );
 		Template::view(
 			Config::get()->html->template->backend.'user-manager.html',
 			[

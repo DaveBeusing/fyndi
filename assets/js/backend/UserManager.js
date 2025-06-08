@@ -44,16 +44,30 @@ export default class UserManager {
 				data.users.forEach( user => {
 					const tr = document.createElement( 'tr' );
 					tr.innerHTML = `
-						<td>${user.id}</td>
-						<td>${user.username}</td>
+						<td>${user.uid}</td>
+						<td>${user.email}</td>
 						<td>
-							<select class="user-role" data-id="${user.id}">
+							<select class="user-role" data-id="${user.uid}">
 							<option value="user" ${user.role === 'user' ? 'selected' : ''}>User</option>
 							<option value="editor" ${user.role === 'editor' ? 'selected' : ''}>Editor</option>
 							<option value="admin" ${user.role === 'admin' ? 'selected' : ''}>Admin</option>
 							</select>
 						</td>
+						<td>
+							<select class="user-status" data-id="${user.status}">
+							<option value="user" ${user.status === 0 ? 'selected' : ''}>Inactive</option>
+							<option value="editor" ${user.status === 1 ? 'selected' : ''}>Active</option>
+							<option value="admin" ${user.status === 2 ? 'selected' : ''}>Suspended</option>
+							</select>
+						</td>
+						<td>${user.login_attempts}</td>
+						<td>${user.created_at}</td>
+						<td>${user.updated_at}</td>
+						<td>${user.updated_by}</td>
 					`;
+					tr.addEventListener( 'click', () => {
+						this.fetchUserLogins( `${user.uid}` );
+					});
 					tbody.appendChild( tr );
 				} );
 			} );
@@ -69,21 +83,59 @@ export default class UserManager {
 		.then( data => {
 			const msg = this.$( '#userMessage' );
 			if( data.success ){
-				msg.textContent = 'Benutzer erfolgreich erstellt';
+				msg.textContent = 'User creation successfull';
 				msg.style.color = '#065f46';
 				this.fetchUsers();
+				this.$( '#createUserForm' ).reset();
 			}
 			else {
-				msg.textContent = data.error || 'Fehler beim Erstellen';
+				msg.textContent = data.error || 'Error creating new user';
 				msg.style.color = '#b91c1c';
 			}
 		});
+	}
+	fetchUserLogins( uid ){
+		fetch( `${this.app.baseURL}/api/backend`, {
+			method: 'POST',
+			body: new URLSearchParams( { action: "userlogins", uid: uid } )
+		} )
+		.then( response => response.json() )
+		.then( data => { 
+			if( data.success ){
+				this.$( '#user-summary' ).classList.toggle( 'hidden' );
+			}
+			if( data.success && data.summary ){
+				this.$( '#last-login-time' ).textContent = data.summary.last_login_time || '-';
+				this.$( '#last-login-ip' ).textContent = data.summary.last_login_ip || '-';
+				this.$( '#successfull-logins' ).textContent = data.summary.successfull_logins_total;
+				this.$( '#failed-logins' ).textContent = data.summary.failed_logins_total;
+			}
+			if( data.success && Array.isArray( data.last_logins ) ){
+				const tbody = this.$( '#loginLogTableBody' );
+				tbody.innerHTML = '';
+				data.last_logins.forEach( entry => {
+					const row = document.createElement( 'tr' );
+					row.innerHTML = `
+						<td>${entry.success == 1 ? '✅' : '❌'}</td>
+						<td>${entry.ip}</td>
+						<td>${entry.user_agent}</td>
+						<td>${entry.login_time}</td>
+					`;
+					tbody.appendChild(row);
+				});
+			}
+
+
+		} );
 	}
 	init(){
 		this.fetchUsers();
 		this.$( '#createUserForm' ).addEventListener( 'submit', event => {
 			event.preventDefault();
 			this.createUser();
+		} );
+		this.$( '#close-summary' ).addEventListener( 'click', event => {
+			this.$( '#user-summary' ).classList.toggle( 'hidden' );
 		} );
 	}
 }

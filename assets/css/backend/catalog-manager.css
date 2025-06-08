@@ -28,18 +28,32 @@ body {
 	margin: 0;
 	background-color: #f4f6f8;
 }
+
 header {
-	background-color: #1f2937;
+	background-color: #1f2937; 
 	color: white;
 	padding: 1rem 2rem;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
 }
-main {
-	padding: 2rem;
-}
-h1 {
+header h1 {
 	margin: 0;
 	font-size: 1.5rem;
 }
+
+header a.logout {
+	color: white;
+	text-decoration: none;
+	background-color: #ef4444;
+	padding: 0.4rem 0.8rem;
+	border-radius: 4px;
+}
+
+main {
+	padding: 2rem;
+}
+
 .toolbar {
 	display: flex;
 	justify-content: space-between;

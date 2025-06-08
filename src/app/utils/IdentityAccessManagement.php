@@ -33,6 +33,7 @@ class IdentityAccessManagement {
 	private $PDO;
 	private $SessionName;
 	private $SessionLifetime;
+	private $MaxLoginAttempts;
 
 	private $Locations = [
 		'login' => 'login',
@@ -56,9 +57,10 @@ class IdentityAccessManagement {
 		]
 	];
 
-	public function __construct( $session_name = 'iam', $session_lifetime = 3600 ){
+	public function __construct( string $session_name = 'iam', int $session_lifetime = 3600, int $max_login_attempts = 3 ){
 		$this->SessionName = $session_name;
 		$this->SessionLifetime = $session_lifetime;
+		$this->MaxLoginAttempts = $max_login_attempts;
 		$this->Platforms = json_decode( json_encode( $this->Platforms ) );
 		$this->Locations = (object) $this->Locations;
 		session_name( $this->SessionName );
@@ -81,13 +83,13 @@ class IdentityAccessManagement {
 		}
 	}
 
-	public function auth( string $username, string $password, string $returnURL ) : string {
-		$user = $this->authenticate( $username, $password );
+	public function auth( string $email, string $password, string $returnURL ) : string {
+		$user = $this->authenticate( $email, $password );
 		if( $user ){
 			$this->redirect( $returnURL );
 			exit;
 		} else {
-			return 'Benutzername oder Passwort falsch.';
+			return 'E-Mail or Password incorrect or Account suspended.';
 		}
 	}
 
@@ -104,8 +106,8 @@ class IdentityAccessManagement {
 			return false;
 		}
 		$hash = password_hash( $password, PASSWORD_DEFAULT );
-		$stmt = $this->PDO->prepare( "INSERT INTO users (username, password_hash, role) VALUES (:username, :hash, :role)" );
-		$stmt->bindParam( ':username', $username, \PDO::PARAM_STR );
+		$stmt = $this->PDO->prepare( "INSERT INTO iam_users ( email, password_hash, role ) VALUES ( :email, :hash, :role )" );
+		$stmt->bindParam( ':email', $email, \PDO::PARAM_STR );
 		$stmt->bindParam( ':hash', $hash, \PDO::PARAM_STR );
 		$stmt->bindParam( ':role', $role, \PDO::PARAM_STR );
 		try {
@@ -117,7 +119,7 @@ class IdentityAccessManagement {
 	}
 
 	public function loadUsers(){
-		$stmt = $this->PDO->query( "SELECT id, username, role FROM users ORDER BY id ASC" );
+		$stmt = $this->PDO->query( "SELECT uid, email, role, status, login_attempts, created_at, updated_at, updated_by FROM iam_users ORDER BY uid ASC" );
 		$stmt->execute();
 		$users = $stmt->fetchAll( \PDO::FETCH_ASSOC );
 		if( $users ){
@@ -126,28 +128,57 @@ class IdentityAccessManagement {
 		return false;
 	}
 
-	private function authenticate( string $username, string $password ) : bool {
-		$stmt = $this->PDO->prepare( "SELECT id, username, password_hash, role FROM users WHERE username = :username" );
-		$stmt->bindParam( ':username', $username, \PDO::PARAM_STR );
+	private function authenticate( string $email, string $password ) : bool {
+		$stmt = $this->PDO->prepare( "SELECT uid, email, password_hash, role, status, login_attempts FROM iam_users WHERE email = :email" );
+		$stmt->bindParam( ':email', $email, \PDO::PARAM_STR );
 		$stmt->execute();
 		$user = $stmt->fetch( \PDO::FETCH_ASSOC );
 		if( $user ){
 			if( password_verify( $password, $user[ 'password_hash' ] ) ){
-				$hash = $this->createFingerprint();
-				$_COOKIE[ $this->SessionName ] = $hash;
-				$_SESSION[ $this->SessionName ] = (object) [ 'name' => $user[ 'username' ], 'role' => $user[ 'role' ], 'hash' => $hash ];
-				setcookie( $this->SessionName, $hash, time() + $this->SessionLifetime, "/" );
-				$this->logLogin( $user['id'], 1 );
-				return true;
+				if( $user['login_attempts'] >= $this->MaxLoginAttempts ){
+					$this->setStatus( $user['uid'], 2 );
+					return false;
+				}
+				else {
+					$hash = $this->createFingerprint();
+					$_COOKIE[ $this->SessionName ] = $hash;
+					$_SESSION[ $this->SessionName ] = (object) [ 'email' => $user[ 'email' ], 'role' => $user[ 'role' ], 'hash' => $hash ];
+					setcookie( $this->SessionName, $hash, time() + $this->SessionLifetime, "/" );
+					$this->updateLoginAttempt( $user['uid'], true );
+					$this->logLogin( $user['uid'], true );
+					return true;
+				}
 			}
 			else{
-				$this->logLogin( $user['id'], 0 );
+				$this->updateLoginAttempt( $user['uid'], false );
+				$this->logLogin( $user['uid'], false );
 			}
 		}
 		return false;
 	}
 
-	private function logLogin( int $uid, int $success ) : void {
+	private function setStatus( int $uid, int $status = 0 ) : void {
+		$stmt = $this->PDO->prepare( "UPDATE iam_users SET status = :status WHERE uid = :uid" );
+		$stmt->bindParam( ':uid', $email, \PDO::PARAM_INT );
+		$stmt->bindParam( ':status', $email, \PDO::PARAM_INT );
+		$stmt->execute();
+	}
+
+	private function updateLoginAttempt( int $uid, bool $success = false ) : void {
+		if( $success ){
+			$stmt = $this->PDO->prepare( "UPDATE iam_users SET login_attempts = 0 WHERE uid = :uid" );
+			$stmt->bindParam( ':uid', $email, \PDO::PARAM_INT );
+			$stmt->execute();
+		}
+		else {
+			$stmt = $this->PDO->prepare( "UPDATE iam_users SET login_attempts = login_attempts + 1 WHERE uid = :uid" );
+			$stmt->bindParam( ':uid', $email, \PDO::PARAM_INT );
+			$stmt->execute();
+		}
+	}
+
+	private function logLogin( int $uid, bool $success ) : void {
+		$success = (int) $success;
 		$ip = ip2long( $this->getClientIP() );
 		$agent = $this->getClientUseragent() ?? 'Unknown';
 		$stmt = $this->PDO->prepare( "INSERT INTO iam_logins ( uid, success, ip_address, user_agent ) VALUES ( :uid, :success, :ip, :agent )" );
@@ -156,6 +187,44 @@ class IdentityAccessManagement {
 		$stmt->bindParam( ':ip', $ip, \PDO::PARAM_INT );
 		$stmt->bindParam( ':agent', $agent, \PDO::PARAM_STR );
 		$stmt->execute();
+	}
+
+	public function getUserLogins( int $uid ) : string {
+		$stmt_summary = $this->PDO->prepare( "
+			SELECT 
+				u.uid,
+				u.email,
+				u.role,
+				u.status,
+				u.login_attempts,
+				MAX( l.login_time ) AS last_login_time,
+				INET_NTOA( MAX( CASE WHEN l.success = 1 THEN l.ip_address ELSE NULL END ) ) AS last_login_ip,
+				COUNT( CASE WHEN l.success = 0 THEN 1 END ) AS failed_logins_total,
+				COUNT( CASE WHEN l.success = 1 THEN 1 END ) AS successfull_logins_total
+			FROM iam_users u
+			LEFT JOIN iam_logins l ON l.uid = u.uid
+			WHERE u.uid = :uid
+			GROUP BY u.uid, u.email, u.role, u.status, u.login_attempts;
+		" );
+		$stmt_summary->bindParam( ':uid', $uid, \PDO::PARAM_INT );
+		$stmt_summary->execute();
+		$user_summary = $stmt_summary->fetch( \PDO::FETCH_ASSOC );
+		$stmt_logins = $this->PDO->prepare( " 
+			SELECT 
+				success,
+				INET_NTOA(ip_address) AS ip,
+				user_agent,
+				login_time
+			FROM iam_logins
+			WHERE uid = :uid
+			ORDER BY login_time DESC
+			LIMIT 10;
+		" );
+		$stmt_logins->bindParam( ':uid', $uid, \PDO::PARAM_INT );
+		$stmt_logins->execute();
+		$user_logins = $stmt_logins->fetchAll( \PDO::FETCH_ASSOC );
+		print json_encode( [ 'success' => true, 'last_logins' => $user_logins, 'summary' => $user_summary ] );
+		exit;
 	}
 
 	private function createFingerprint() : string {

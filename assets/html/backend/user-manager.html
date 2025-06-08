@@ -3,53 +3,53 @@
 <head>
 	<meta charset="UTF-8">
 	<title>User Manager</title>
-	<style>
-		body { font-family: 'Segoe UI', sans-serif; margin: 0; background-color: #f4f6f8; }
-		header { background-color: #1f2937; color: white; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
-		header h1 { margin: 0; font-size: 1.5rem; }
-		header a.logout { color: white; text-decoration: none; background-color: #ef4444; padding: 0.4rem 0.8rem; border-radius: 4px; }
-		main { padding: 2rem; }
-		.user-form, .user-table { background: white; padding: 1rem; border-radius: 6px; max-width: 800px; margin-bottom: 2rem; }
-		.user-form input, .user-form select, table select { width: 95%; padding: 0.5rem; margin-top: 0.3rem; margin-bottom: 1rem; border: 1px solid #ccc; border-radius: 4px; }
-		.user-form label { font-weight: 600; display: block; }
-		.user-form button { background-color: #10b981; color: white; padding: 0.5rem 1rem; border: none; border-radius: 4px; cursor: pointer; }
-		.message { margin-bottom: 1rem; color: #065f46; font-weight: bold; }
-		table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
-		th, td { border: 1px solid #ddd; padding: 0.5rem; text-align: left; }
-		select.user-role { width: 100px; }
-	</style>
+	<meta name="description" content="User Manager">
+	<meta name="robots" content="noindex, nofollow">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" type="text/css" href="<?=$_HTML->URL?>/assets/css/backend/user-manager.css">
 </head>
 <body>
 <header>
 	<h1>User Manager</h1>
 	<a class="logout" href="<?=$_HTML->URL?>/backend/logout">Logout</a>
 </header>
-<main>
-	<form class="user-form" id="createUserForm">
-		<h2>Neuen Benutzer anlegen</h2>
-		<label for="username">Benutzername</label>
-		<input type="text" name="username" id="username" required>
-		<label for="password">Passwort</label>
-		<input type="password" name="password" id="password" required>
-		<label for="role">Rolle</label>
-		<select name="role" id="role">
-			<option value="user">User</option>
-			<option value="editor">Editor</option>
-			<option value="admin">Admin</option>
-		</select>
-		<button type="submit">Benutzer erstellen</button>
-		<div id="userMessage" class="message"></div>
-	</form>
-	<div class="user-table">
-		<h2>Benutzerliste</h2>
-		<table>
-			<thead>
-				<tr><th>ID</th><th>Benutzername</th><th>Rolle</th></tr>
-			</thead>
-		<tbody id="userTable"></tbody>
-		</table>
-	</div>
-</main>
+	<main>
+		<form class="user-form" id="createUserForm">
+			<h2>Create User</h2>
+			<label for="username">E-Mail</label>
+			<input type="email" name="email" id="email" required>
+			<label for="password">Password</label>
+			<input type="password" name="password" id="password" required>
+			<label for="role">Role</label>
+			<select name="role" id="role">
+				<option value="user">User</option>
+				<option value="editor">Editor</option>
+				<option value="admin">Admin</option>
+			</select>
+			<button type="submit">Create User</button>
+			<div id="userMessage" class="message"></div>
+		</form>
+		<div class="user-table">
+			<h2>Userlist</h2>
+			<table>
+				<thead>
+					<tr><th>UID</th><th>E-Mail</th><th>Role</th><th>Status</th><th>Login Attempts</th><th>Created at</th><th>Updated at</th><th>Updated by</th></tr>
+				</thead>
+			<tbody id="userTable"></tbody>
+			</table>
+		</div>
+		<div class="hidden" id="user-summary">
+			<button id="close-summary" title="Close">×</button>
+			<h2>Login-Statistics</h2>
+			<p><strong>Last login:</strong> <span id="last-login-time">-</span> from <span id="last-login-ip">-</span></p>
+			<p><strong>Successfull/Failed logins:</strong> <span id="successfull-logins">-</span> / <span id="failed-logins">-</span></p>
+			<h3>Last logins</h3>
+			<table>
+				<thead><tr><th>Status</th><th>IP</th><th>Agent</th><th>Timestamp</th></tr></thead>
+				<tbody id="loginLogTableBody"></tbody>
+			</table>
+		</div>
+	</main>
 	<span id="loading">Loading...</span>
 	<script type="module" src="<?=$_HTML->URL?>/assets/js/backend/main.js"></script>
 </body>
