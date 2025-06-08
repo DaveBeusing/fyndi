@@ -212,26 +212,35 @@ class Catalog {
 		$pdo = new MySQLPDO( Config::get()->db->host, Config::get()->db->database, Config::get()->db->user, Config::get()->db->password, 'utf8mb4' );
 		$pdo->setAttribute( \PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION );
 		$stats = [];
-		// Grundkennzahlen
-		$stats['total'] = $pdo->query("SELECT COUNT(*) FROM catalog")->fetchColumn();
-		$stats['stocked'] = $pdo->query("SELECT COUNT(*) FROM catalog WHERE stock > 0")->fetchColumn();
-		$stats['eol'] = $pdo->query("SELECT COUNT(*) FROM catalog WHERE iseol = 1")->fetchColumn();
-		$stats['unavailable'] = $pdo->query("SELECT COUNT(*) FROM catalog WHERE availability = 0")->fetchColumn();
-		$stats['avg_price'] = $pdo->query("SELECT ROUND(AVG(price),2) FROM catalog WHERE price > 0")->fetchColumn();
-		$stats['total_stock_value'] = $pdo->query("SELECT ROUND(SUM(price * stock),2) FROM catalog WHERE price > 0")->fetchColumn();
-		$stats['created_7d'] = $pdo->query("SELECT COUNT(*) FROM catalog WHERE created >= NOW() - INTERVAL 7 DAY")->fetchColumn();
-		$stats['avg_weight'] = $pdo->query("SELECT ROUND(AVG(weight),3) FROM catalog WHERE weight > 0")->fetchColumn();
-		$stats['avg_volweight'] = $pdo->query("SELECT ROUND(AVG(volweight),3) FROM catalog WHERE volweight > 0")->fetchColumn();
+		$stats[ 'total'] = $pdo->query("SELECT COUNT(*) FROM catalog")->fetchColumn();
+		$stats[ 'stocked'] = $pdo->query("SELECT COUNT(*) FROM catalog WHERE stock > 0")->fetchColumn();
+		$stats[ 'eol'] = $pdo->query("SELECT COUNT(*) FROM catalog WHERE iseol = 1")->fetchColumn();
+		$stats[ 'unavailable'] = $pdo->query("SELECT COUNT(*) FROM catalog WHERE availability = 0")->fetchColumn();
+		$stats[ 'virtual'] = $pdo->query("SELECT COUNT(*) FROM catalog WHERE category1 = 'Garantie virtuell'")->fetchColumn();
+		$stats[ 'avg_price'] = $pdo->query("SELECT ROUND(AVG(price),2) FROM catalog WHERE price > 0")->fetchColumn();
+		//$stats[ 'total_stock_value'] = $pdo->query( "SELECT ROUND( SUM( price * stock ), 2 ) FROM catalog WHERE price > 0" )->fetchColumn();
+		$stats[ 'total_stock_value'] = $pdo->query( "SELECT ROUND( SUM( price * stock ), 2 ) FROM catalog WHERE category1 != 'Garantie virtuell' AND price > 0" )->fetchColumn();
+		$stats[ 'created_7d'] = $pdo->query("SELECT COUNT(*) FROM catalog WHERE created >= NOW() - INTERVAL 7 DAY")->fetchColumn();
+		$stats[ 'avg_weight'] = $pdo->query("SELECT ROUND(AVG(weight),3) FROM catalog WHERE weight > 0")->fetchColumn();
+		$stats[ 'avg_volweight'] = $pdo->query("SELECT ROUND(AVG(volweight),3) FROM catalog WHERE volweight > 0")->fetchColumn();
+		$stats[ 'unique_manufacturers' ] = $pdo->query( "SELECT COUNT(DISTINCT manufacturer) FROM catalog" )->fetchColumn();
+		$stats[ 'unique_categories' ] = $pdo->query( "SELECT COUNT(DISTINCT category1) FROM catalog" )->fetchColumn();
+		$stats[ 'missing_mpn' ] = $pdo->query( "SELECT SUM(CASE WHEN mpn IS NULL OR mpn = '' THEN 1 ELSE 0 END) FROM catalog" )->fetchColumn();
+		$stats[ 'missing_ean' ] = $pdo->query( "SELECT SUM(CASE WHEN ean IS NULL OR ean = '' THEN 1 ELSE 0 END) FROM catalog" )->fetchColumn();
+		$stats[ 'missing_taric' ] = $pdo->query( "SELECT SUM(CASE WHEN taric IS NULL OR taric = 0 THEN 1 ELSE 0 END) FROM catalog" )->fetchColumn();
+		$stats[ 'refurbished'] = $pdo->query( "SELECT COUNT(*) FROM catalog WHERE iscondition = 1" )->fetchColumn();
+		$stats[ 'shipping_parcel' ] = $pdo->query( "SELECT SUM(CASE WHEN shipping = 1 THEN 1 ELSE 0 END) FROM catalog" )->fetchColumn();
+		$stats[ 'shipping_bulk' ] = $pdo->query( "SELECT SUM(CASE WHEN shipping = 2 THEN 1 ELSE 0 END) FROM catalog" )->fetchColumn();
+		$stats[ 'shipping_epal' ] = $pdo->query( "SELECT SUM(CASE WHEN shipping = 3 THEN 1 ELSE 0 END) FROM catalog" )->fetchColumn();
 		$stmt = $pdo->query("
 			SELECT category1, COUNT(*) as count 
 			FROM catalog 
 			WHERE category1 IS NOT NULL AND category1 != '' 
 			GROUP BY category1 
 			ORDER BY count DESC 
-			LIMIT 5
+			LIMIT 10
 		");
 		$stats['top_categories'] = $stmt->fetchAll( \PDO::FETCH_ASSOC );
-
 		$stmt = $pdo->query("
 			SELECT availability, COUNT(*) as count 
 			FROM catalog 

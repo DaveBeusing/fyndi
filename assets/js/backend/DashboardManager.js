@@ -30,6 +30,13 @@ export default class DashboardManager {
 	$( element ){
 		return document.querySelector( element );
 	}
+	formatPrice( price ){
+		return new Intl.NumberFormat( "de-DE", { style: "currency", currency: "EUR" } ).format( price );
+	}
+	calculatePercentage( base, pval ){
+		// p = P / G
+		return (pval/base*100).toFixed(2);
+	}
 	fetchMetrics(){
 		fetch( `${this.app.baseURL}/api/backend?action=metrics` )
 			.then( response => response.json() )
@@ -38,14 +45,24 @@ export default class DashboardManager {
 				statEl.innerHTML = `
 					<ul>
 						<li><strong>Products total:</strong> ${data.total}</li>
-						<li><strong>in Stock:</strong> ${data.stocked}</li>
-						<li><strong>End-of-Life:</strong> ${data.eol}</li>
-						<li><strong>out of Stock:</strong> ${data.unavailable}</li>
-						<li><strong>Ø Price:</strong> ${data.avg_price} €</li>
-						<li><strong>Stock Value:</strong> ${data.total_stock_value} €</li>
+						<li><strong>in Stock:</strong> ${data.stocked} ${this.calculatePercentage( data.total, data.stocked )}%</li>
+						<li><strong>End-of-Life:</strong> ${data.eol} ${this.calculatePercentage( data.total, data.eol )}%</li>
+						<li><strong>out of Stock:</strong> ${data.unavailable} ${this.calculatePercentage( data.total, data.unavailable )}%</li>
+						<li><strong>Virtual:</strong> ${data.virtual} ${this.calculatePercentage( data.total, data.virtual )}%</li>
+						<li><strong>Ø Price:</strong> ${this.formatPrice(data.avg_price)}</li>
+						<li><strong>Stock Value:</strong> ${this.formatPrice(data.total_stock_value)}</li>
 						<li><strong>Ø Weight:</strong> ${data.avg_weight} kg</li>
 						<li><strong>Ø Volumetric Weight:</strong> ${data.avg_volweight} kg</li>
 						<li><strong>New (7d):</strong> ${data.created_7d}</li>
+						<li><strong>Manufacturers:</strong> ${data.unique_manufacturers}</li>
+						<li><strong>Categories:</strong> ${data.unique_categories}</li>
+						<li><strong>Missing MPN:</strong> ${data.missing_mpn} ${this.calculatePercentage( data.total, data.missing_mpn )}%</li>
+						<li><strong>Missing EAN:</strong> ${data.missing_ean} ${this.calculatePercentage( data.total, data.missing_ean )}%</li>
+						<li><strong>Missing TARIC:</strong> ${data.missing_taric} ${this.calculatePercentage( data.total, data.missing_taric )}%</li>
+						<li><strong>Refurbished:</strong> ${data.refurbished} ${this.calculatePercentage( data.total, data.refurbished )}%</li>
+						<li><strong>Shipping Parcel:</strong> ${data.shipping_parcel} ${this.calculatePercentage( data.total, data.shipping_parcel )}%</li>
+						<li><strong>Shipping Bulk:</strong> ${data.shipping_bulk} ${this.calculatePercentage( data.total, data.shipping_bulk )}%</li>
+						<li><strong>Shipping ePal:</strong> ${data.shipping_epal} ${this.calculatePercentage( data.total, data.shipping_epal )}%</li>
 					</ul>
 					<h3>Top-Categories</h3>
 					<ul>

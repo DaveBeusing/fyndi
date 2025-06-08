@@ -290,7 +290,7 @@ class ApiGmbH {
 				$d = 3;
 			break;
 			default:
-				$d = 1;
+				$d = 0;
 		endswitch;
 		return $d;
 	}
