@@ -124,8 +124,6 @@ export default class UserManager {
 					tbody.appendChild(row);
 				});
 			}
-
-
 		} );
 	}
 	init(){

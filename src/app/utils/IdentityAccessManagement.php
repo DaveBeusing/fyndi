@@ -187,7 +187,7 @@ class IdentityAccessManagement {
 		return false;
 	}
 
-	private function verifyUser( $token = false ) : void {
+	public function verifyUser( string $token = '' ) : void {
 		if( !$token ){
 			$this->redirect( $this->Locations->LoginURL );
 		}
