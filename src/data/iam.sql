@@ -7,17 +7,23 @@ VALUES (
   'admin'
 );
 
-CREATE TABLE iam_users (
-  uid INT AUTO_INCREMENT PRIMARY KEY,
-  email VARCHAR(100) NOT NULL UNIQUE,
-  password_hash VARCHAR(255) NOT NULL,
-  role VARCHAR(20) NOT NULL DEFAULT 'user',
-  status TINYINT(1) NOT NULL DEFAULT 1,
-  login_attempts INT NOT NULL DEFAULT 0,
-  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-  updated_at DATETIME DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
-  updated_by INT DEFAULT NULL
+CREATE TABLE `iam_users` (
+  `uid` int(11) NOT NULL,
+  `email` varchar(100) NOT NULL,
+  `password_hash` varchar(255) NOT NULL,
+  `role` varchar(20) NOT NULL DEFAULT 'user',
+  `status` tinyint(1) NOT NULL DEFAULT 0,
+  `login_attempts` int(11) NOT NULL DEFAULT 0,
+  `token` varchar(64) DEFAULT NULL,
+  `token_expires` datetime DEFAULT NULL,
+  `created_at` datetime DEFAULT current_timestamp(),
+  `updated_at` datetime DEFAULT NULL ON UPDATE current_timestamp(),
+  `updated_by` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+ALTER TABLE `iam_users`
+  ADD PRIMARY KEY (`uid`),
+  ADD UNIQUE KEY `email` (`email`);
 
 CREATE TABLE iam_logins (
   id INT AUTO_INCREMENT PRIMARY KEY,

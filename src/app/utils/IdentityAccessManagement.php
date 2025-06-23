@@ -34,10 +34,22 @@ class IdentityAccessManagement {
 	private $SessionName;
 	private $SessionLifetime;
 	private $MaxLoginAttempts;
+	private $EmailFrom = 'SYS-OPS <sysops@bsng.eu>';
+	private $EmailReturn = 'sysops@bsng.eu';
+
+	private $Emails = [
+		'From' => 'SYS-OPS <sysops@bsng.eu>',
+		'Return' => 'sysops@bsng.eu',
+		'Support' => 'support@bsng.eu'
+	];
 
 	private $Locations = [
-		'login' => 'login',
-		'logout' => 'logout'
+		'BaseDirectory' => '', 
+		'BaseURL' => 'https://bsng.eu/app/fyndi/',
+		'LoginURL' => 'login',
+		'LogoutURL' => 'logout',
+		'VerifyURL' => 'backend/verify',
+		'ResetURL' => 'backend/reset'
 	];
 
 	private $Platforms = [
@@ -63,6 +75,8 @@ class IdentityAccessManagement {
 		$this->MaxLoginAttempts = $max_login_attempts;
 		$this->Platforms = json_decode( json_encode( $this->Platforms ) );
 		$this->Locations = (object) $this->Locations;
+		$this->Emails = (object) $this->Emails;
+		$this->Locations->BaseDirectory = realpath( __DIR__ . '/../../../' ); // currently in .../www/app/fyndi/src/app/utils
 		session_name( $this->SessionName );
 		session_set_cookie_params( $this->SessionLifetime );
 		if( session_status() === PHP_SESSION_NONE ){
@@ -74,7 +88,7 @@ class IdentityAccessManagement {
 
 	public function secure( array $allowedRoles ) : void {
 		if( !isset( $_SESSION[ $this->SessionName ] ) || !isset( $_COOKIE[ $this->SessionName ] ) || !$this->validateFingerprint( $_COOKIE[ $this->SessionName ] ) ) {
-			$this->redirect( $this->Locations->login );
+			$this->redirect( $this->Locations->LoginURL );
 			exit;
 		}
 		if( !in_array( $_SESSION[ $this->SessionName ]->role, $allowedRoles ) ){
@@ -97,21 +111,37 @@ class IdentityAccessManagement {
 		setcookie( $this->SessionName, '', time() - ( $this->SessionLifetime + 2 ), "/" );
 		$_SESSION[ $this->SessionName ] = (object) array();
 		session_destroy();
-		$this->redirect( $this->Locations->login );
+		$this->redirect( $this->Locations->LoginURL );
 		exit;
 	}
 
-	public function createUser( string $username, string $password, string $role = 'user' ) : bool {
-		if( empty( $username ) || empty( $password ) ) {
+	public function createUser( string $email, string $password, string $role = 'user' ) : bool {
+		if( empty( $email ) || empty( $password ) ) {
 			return false;
 		}
 		$hash = password_hash( $password, PASSWORD_DEFAULT );
-		$stmt = $this->PDO->prepare( "INSERT INTO iam_users ( email, password_hash, role ) VALUES ( :email, :hash, :role )" );
+		$token = bin2hex( random_bytes( 32 ) );
+		$stmt = $this->PDO->prepare( "INSERT INTO iam_users ( email, password_hash, role, token ) VALUES ( :email, :hash, :role, :token )" );
 		$stmt->bindParam( ':email', $email, \PDO::PARAM_STR );
 		$stmt->bindParam( ':hash', $hash, \PDO::PARAM_STR );
 		$stmt->bindParam( ':role', $role, \PDO::PARAM_STR );
+		$stmt->bindParam( ':token', $token, \PDO::PARAM_STR );
 		try {
-			return $stmt->execute();
+			$success = $stmt->execute();
+			if( $success ){
+				$verifyLink = $this->Locations->BaseURL . $this->Locations->VerifyURL . '/' . $token;
+				$payload = [
+					'subject' => 'Verify your email',
+					'supportEmail' => $this->Emails->Support,
+					'verifyLink' => $verifyLink
+				];
+				$this->sendEmail(
+					$email,
+					$payload,
+					'/assets/html/backend/mailing/account-verify.html'
+				);
+				return true;
+			}
 		}
 		catch( \PDOException $error ){
 			return false;
@@ -155,6 +185,80 @@ class IdentityAccessManagement {
 			}
 		}
 		return false;
+	}
+
+	private function verifyUser( $token = false ) : void {
+		if( !$token ){
+			$this->redirect( $this->Locations->LoginURL );
+		}
+		$stmt_uid = $this->PDO->prepare( "SELECT uid FROM iam_users WHERE token = :token AND status = 0" );
+		$stmt_uid->bindParam( ':token', $token, \PDO::PARAM_STR );
+		$stmt_uid->execute();
+		$user = $stmt_uid->fetch( \PDO::FETCH_ASSOC );
+		if( $user ){
+			$stmt_update = $this->PDO->prepare( "UPDATE iam_users SET status = 1, token = NULL WHERE uid = :uid" );
+			$stmt_update->bindParam( ':uid', $user['uid'], \PDO::PARAM_STR );
+			$stmt_update->execute();
+			$this->redirect( $this->Locations->LoginURL );
+		}
+		else {
+			$this->redirect( $this->Locations->LoginURL );
+		}
+	}
+
+	public function requestPasswordReset( string $email = '' ){
+		if( $email ){
+			$stmt = $this->PDO->prepare( "SELECT uid FROM iam_users WHERE email = :email" );
+			$stmt->bindParam( ':email', $email, \PDO::PARAM_STR );
+			$stmt->execute();
+			$user = $stmt->fetch( \PDO::FETCH_ASSOC );
+			if( $user ){
+				$token = bin2hex( random_bytes( 32 ) );
+				$expires = date( 'Y-m-d H:i:s', time() + 3600 );
+				$stmt_update = $this->PDO->prepare( "UPDATE iam_users SET token = :token, token_expires = :expires WHERE uid = :uid" );
+				$stmt_update->bindParam( ':token', $token, \PDO::PARAM_STR );
+				$stmt_update->bindParam( ':expires', $expires, \PDO::PARAM_STR );
+				$stmt_update->bindParam( ':uid', $user['uid'], \PDO::PARAM_STR );
+				$stmt_update->execute();
+				$resetLink = $this->Locations->BaseURL . $this->Locations->ResetURL . '/' . $token;
+				$payload = [
+					'subject' => 'Password reset request',
+					'supportEmail' => $this->Emails->Support,
+					'resetLink' => $resetLink
+				];
+				$this->sendEmail(
+					$email,
+					$payload,
+					'/assets/html/backend/mailing/account-reset.html'
+				);
+			}
+		}
+	}
+
+	public function resetPassword( string $token = '', string $password = '' ){
+		$stmt = $this->PDO->prepare( "SELECT uid, email FROM iam_users WHERE token = :token AND token_expires > NOW()" );
+		$stmt->bindParam( ':token', $token, \PDO::PARAM_STR );
+		$stmt->execute();
+		$user = $stmt_uid->fetch( \PDO::FETCH_ASSOC );
+		if( $user ){
+			$hash = password_hash( $password, PASSWORD_DEFAULT );
+			$stmt_update = $this->PDO->prepare( "UPDATE iam_users SET password_hash = :hash, token = NULL, expires = NULL WHERE uid = :uid" );
+			$stmt_update->bindParam( ':hash', $hash, \PDO::PARAM_STR );
+			$success = $stmt_update->execute();
+			if( $success ){
+				$payload = [
+					'subject' => 'Password reset successfull',
+					'supportEmail' => $this->Emails->Support
+				];
+				$this->sendEmail(
+					$user['email'],
+					$payload,
+					'/assets/html/backend/mailing/account-reset-success.html'
+				);
+			}
+			$this->redirect( $this->Locations->LoginURL );
+		}
+		$this->redirect( $this->Locations->LoginURL );
 	}
 
 	private function setStatus( int $uid, int $status = 0 ) : void {
@@ -278,6 +382,24 @@ class IdentityAccessManagement {
 			'browser' => $browser,
 			'os' => $os
 		];
+	}
+
+	private function sendEmail( $recipient = false, $payload = [], $template = false ) : bool {
+		$template = file_get_contents( $this->Locations->BaseDirectory . $template );
+		$replacements = [];
+		$values = [];
+		foreach( $payload as $key => $value ){
+			$replacements[] = '{{' . $key . '}}';
+			$values[] = is_string( $value ) ? nl2br( htmlspecialchars( $value ) ) : $value;
+		}
+		$html = str_replace( $replacements, $values, $template );
+		$html = preg_replace('/{{\s*[\w]+\s*}}/', '', $html); //remove all forgotten placeholders!
+		$headers = array();
+		$headers[] = "MIME-Version: 1.0";
+		$headers[] = "Content-type: text/html; charset=utf8";
+		$headers[] = "From: ".$this->Emails->From;
+		$headers[] = "Return-Path: ".$this->Emails->Return;
+		return mail( $recipient, $payload['subject'], $html, implode( "\r\n", $headers ) );
 	}
 }
 ?>

@@ -41,6 +41,8 @@ RewriteRule ^backend/logout$		index.php?view=logout [QSA,L,NE]
 RewriteRule ^backend/dashboard$		index.php?view=dashboard [QSA,L,NE]
 RewriteRule ^backend/user$			index.php?view=user [QSA,L,NE]
 RewriteRule ^backend/catalog$		index.php?view=catalog [QSA,L,NE]
+RewriteRule ^backend/verify/(.+)$	index.php?view=verify&token=$1 [QSA,L,NE]
+RewriteRule ^backend/reset/(.+)$	index.php?view=reset&token=$1 [QSA,L,NE]
 
 # /fyndi/image/uid/800x600 → index.php?view=image&uid=uid&size=800x600
 RewriteRule ^image/([^/]+)/([^/]+)$ index.php?view=image&uid=$1&size=$2 [QSA,L]

@@ -185,6 +185,11 @@ switch( filter_input( INPUT_GET, 'view', FILTER_SANITIZE_SPECIAL_CHARS ) ):
 		$iam->deauth();
 	break;
 
+	case 'verify':
+		$token = filter_input( INPUT_GET, 'token', FILTER_SANITIZE_SPECIAL_CHARS );
+		$iam->verifyUser( $token );
+	break;
+
 	case 'debug':
 		$iam->secure( [ 'Admin', 'Editor' ] );
 		$uid = Utils::generateUID();

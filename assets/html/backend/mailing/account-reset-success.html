@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+	<meta charset="UTF-8">
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+			background-color: #f3f4f6;
+			margin: 0;
+			padding: 0;
+		}
+		.wrapper {
+			width: 100%;
+			table-layout: fixed;
+			background-color: #f3f4f6;
+			padding: 30px 0;
+		}
+		.content {
+			max-width: 600px;
+			margin: 0 auto;
+			background-color: #ffffff;
+			border-radius: 8px;
+			box-shadow: 0 0 6px rgba(0, 0, 0, 0.05);
+			padding: 30px;
+		}
+		h1 {
+			color: #2563eb;
+		}
+		.footer {
+			margin-top: 30px;
+			font-size: 12px;
+			color: #6b7280;
+		}
+	</style>
+</head>
+<body>
+	<div class="wrapper">
+		<div class="content">
+			<h1>{{subject}}</h1>
+			<p>
+				Yay! you sucessfully recovered your account. <br><br>
+				You set a new password, please remind to reset the password inside your preferred password manager too.<br><br>
+				For your protection, your account will be also manual reviewed within the next hours.<br><br>
+			</p>
+			<p>
+				If you have any questions, contact us anytime at <i>{{supportEmail}}</i><br>
+				After your successfully set your new password you can login with your credentials again.<br>
+				<br>
+				<b>Hint:</b> In some very rare cases we will protect your account and you have to wait until we reset it manually.
+			</p>
+			<p>
+				Best regards,<br>
+				Account Management Team
+			</p>
+			<div class="footer">
+				This is an automated message. Please do not reply.<br>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

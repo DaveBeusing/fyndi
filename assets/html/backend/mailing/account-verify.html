@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+	<meta charset="UTF-8">
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+			background-color: #f3f4f6;
+			margin: 0;
+			padding: 0;
+		}
+		.wrapper {
+			width: 100%;
+			table-layout: fixed;
+			background-color: #f3f4f6;
+			padding: 30px 0;
+		}
+		.content {
+			max-width: 600px;
+			margin: 0 auto;
+			background-color: #ffffff;
+			border-radius: 8px;
+			box-shadow: 0 0 6px rgba(0, 0, 0, 0.05);
+			padding: 30px;
+		}
+		h1 {
+			color: #2563eb;
+		}
+		.footer {
+			margin-top: 30px;
+			font-size: 12px;
+			color: #6b7280;
+		}
+	</style>
+</head>
+<body>
+	<div class="wrapper">
+		<div class="content">
+			<h1>{{subject}}</h1>
+			<p>
+				Thanks for choosing us. We're happy to assist you on your journey! <br>
+				Your account has been created and is almost ready to use, there is only one last step.<br>
+				Just click the link below and log into your account to verify it.
+			</p>
+			<p>
+				<a href="{{verifyLink}}">{{verifyLink}}</a>
+			</p>
+			<p>
+				For your protection, the above link is good for a single use and expires in 24hrs.<br>
+				If you have any questions, contact us anytime at <i>{{supportEmail}}</i><br>
+				After your successfull activation you can login with your credentials.
+			</p>
+			<p>
+				Best regards,<br>
+				Account Management Team
+			</p>
+			<div class="footer">
+				This is an automated message. Please do not reply.
+			</div>
+		</div>
+	</div>
+</body>
+</html>
