@@ -23,7 +23,7 @@
  * 
  */
 
-namespace app\utils;
+namespace app\identity;
 
 use app\config\Config;
 use app\database\MySQLPDO;
@@ -34,13 +34,16 @@ class IdentityAccessManagement {
 	private $SessionName;
 	private $SessionLifetime;
 	private $MaxLoginAttempts;
-	private $EmailFrom = 'SYS-OPS <sysops@bsng.eu>';
-	private $EmailReturn = 'sysops@bsng.eu';
 
 	private $Emails = [
 		'From' => 'SYS-OPS <sysops@bsng.eu>',
 		'Return' => 'sysops@bsng.eu',
 		'Support' => 'support@bsng.eu'
+	];
+
+	private $Mailings = [
+		'Verify' => '/assets/html/backend/mailing/account-verify.html',
+		'ResetPassword' => '/assets/html/backend/mailing/account-reset.html'
 	];
 
 	private $Locations = [
@@ -76,6 +79,7 @@ class IdentityAccessManagement {
 		$this->Platforms = json_decode( json_encode( $this->Platforms ) );
 		$this->Locations = (object) $this->Locations;
 		$this->Emails = (object) $this->Emails;
+		$this->Mailings = (object) $this->Mailings;
 		$this->Locations->BaseDirectory = realpath( __DIR__ . '/../../../' ); // currently in .../www/app/fyndi/src/app/utils
 		session_name( $this->SessionName );
 		session_set_cookie_params( $this->SessionLifetime );
@@ -101,7 +105,6 @@ class IdentityAccessManagement {
 		$user = $this->authenticate( $email, $password );
 		if( $user ){
 			$this->redirect( $returnURL );
-			exit;
 		} else {
 			return 'E-Mail or Password incorrect or Account suspended.';
 		}
@@ -138,7 +141,7 @@ class IdentityAccessManagement {
 				$this->sendEmail(
 					$email,
 					$payload,
-					'/assets/html/backend/mailing/account-verify.html'
+					$this->Mailings->Verify
 				);
 				return true;
 			}
@@ -229,7 +232,7 @@ class IdentityAccessManagement {
 				$this->sendEmail(
 					$email,
 					$payload,
-					'/assets/html/backend/mailing/account-reset.html'
+					$this->Mailings->ResetPassword
 				);
 			}
 		}

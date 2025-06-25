@@ -1,4 +1,4 @@
-<?php 
+<?php
 /****
  * Copyright (C) 2025 Dave Beusing <david.beusing@gmail.com>
  * 
@@ -42,7 +42,7 @@ use app\utils\Utils;
 use app\utils\Template;
 use app\dataprovider\Catalog;
 use app\backend\Manager;
-use app\utils\IdentityAccessManagement;
+use app\identity\IdentityAccessManagement;
 
 $iam = new IdentityAccessManagement();
 
@@ -165,37 +165,12 @@ switch( filter_input( INPUT_GET, 'view', FILTER_SANITIZE_SPECIAL_CHARS ) ):
 		);
 	break;
 
-	case 'login':
-		if( $_SERVER['REQUEST_METHOD'] === 'POST' ){
-			$username = $_POST['username'] ?? '';
-			$password = $_POST['password'] ?? '';
-			$response = $iam->auth( $username, $password, 'dashboard' );
-		}
-		Template::view(
-			Config::get()->html->template->path.'login.html',
-			[
-				'Title' => Config::get()->app->name,
-				'URL' => Config::get()->app->url,
-				'Response' => $response ?? '',
-			]
-		);
-	break;
-
-	case 'logout':
-		$iam->deauth();
-	break;
-
-	case 'verify':
-		$token = filter_input( INPUT_GET, 'token', FILTER_SANITIZE_SPECIAL_CHARS );
-		$iam->verifyUser( $token );
-	break;
-
 	case 'debug':
 		$iam->secure( [ 'Admin', 'Editor' ] );
 		$uid = Utils::generateUID();
 		$isValid = Utils::validateUID( $uid );
 		print "UID: $uid / isValid: $isValid <br><br>";
-		print "Generated Password: <br> Hash:" .password_hash( '', PASSWORD_DEFAULT) . "<br>";
+		print "Generated Password: <br> Hash:" .password_hash( '', PASSWORD_DEFAULT ) . "<br>";
 		print_r( $_SESSION );
 		print '<br>';
 
