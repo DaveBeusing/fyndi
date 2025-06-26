@@ -23,12 +23,12 @@
  * 
  */
 
-namespace app\backend;
+namespace app\catalog;
 
 use app\config\Config;
 use app\database\MySQLPDO;
 
-class Manager {
+class CatalogManager {
 
 
 	public static function searchItems( $query, $sort, $dir, $page, $limit, $offset ){

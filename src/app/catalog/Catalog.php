@@ -23,7 +23,7 @@
  * 
  */
 
-namespace app\dataprovider;
+namespace app\catalog;
 
 use app\config\Config;
 use app\database\MySQLPDO;
