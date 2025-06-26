@@ -54,8 +54,6 @@ switch( filter_input( INPUT_GET, 'view', FILTER_SANITIZE_SPECIAL_CHARS ) ):
 		Catalog::getProductImage( $uid, $size[0], $size[1] );
 	break;
 
-
-
 	case 'item':
 		$uid = filter_input( INPUT_GET, 'uid', FILTER_SANITIZE_SPECIAL_CHARS );
 		if( !$uid || !Utils::validateUID( $uid ) ){
@@ -74,9 +72,6 @@ switch( filter_input( INPUT_GET, 'view', FILTER_SANITIZE_SPECIAL_CHARS ) ):
 			]
 		);
 	break;
-
-
-
 
 	case 'debug':
 		$iam->secure( [ 'Admin', 'Editor' ] );

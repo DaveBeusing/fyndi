@@ -29,6 +29,58 @@ require_once 'src/autoload.php';
 /**
  * Includes
  */
+use app\config\Config;
+use app\utils\Utils;
+use app\catalog\Catalog;
+use app\template\TemplateEngine;
 
+switch( filter_input( INPUT_GET, 'view', FILTER_SANITIZE_SPECIAL_CHARS ) ):
+
+	case 'image':
+		$uid = filter_input( INPUT_GET, 'uid', FILTER_SANITIZE_SPECIAL_CHARS );
+		$size = explode( 'x', ( filter_input( INPUT_GET, 'size', FILTER_SANITIZE_SPECIAL_CHARS ) ?? '800x600' ) );
+		Catalog::getProductImage( $uid, $size[0], $size[1] );
+	break;
+
+	case 'item':
+		$uid = filter_input( INPUT_GET, 'uid', FILTER_SANITIZE_SPECIAL_CHARS );
+		if( !$uid || !Utils::validateUID( $uid ) ){
+			header( 'HTTP/1.0 404 Not Found' );
+			header( 'Location: '. Config::get()->app->url );
+			exit;
+		}
+		$item = Catalog::getItemDetails( $uid );
+		TemplateEngine::render(
+			Config::get()->html->template->path.'item.html',
+			[
+				'Title' => Config::get()->app->name,
+				'BaseURL' => Config::get()->app->url,
+				'Slogan' => Config::get()->app->slogan,
+				'Item' => (object) $item
+			]
+		);
+	break;
+
+	case 'debug':
+		$iam->secure( [ 'Admin', 'Editor' ] );
+		$uid = Utils::generateUID();
+		$isValid = Utils::validateUID( $uid );
+		print "UID: $uid / isValid: $isValid <br><br>";
+		print "Generated Password: <br> Hash:" .password_hash( '', PASSWORD_DEFAULT ) . "<br>";
+		print_r( $_SESSION );
+		print '<br>';
+
+	break;
+
+	default:
+		TemplateEngine::render(
+			Config::get()->html->template->path.'search.html',
+			[
+				'Title' => Config::get()->app->name,
+				'BaseURL' => Config::get()->app->url,
+				'Slogan' => Config::get()->app->slogan,
+			]
+		);
+endswitch;
 
 ?>

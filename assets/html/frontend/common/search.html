@@ -9,14 +9,14 @@
 		gtag('config', 'G-V22GRNJ6NK');
 	</script>
 	<meta charset="UTF-8">
-	<title><?=$_HTML->Title?> - <?=$_HTML->Slogan?></title>
-	<meta name="description" content="<?=$_HTML->Title?> - <?=$_HTML->Slogan?>">
+	<title>{{Title}} - {{Slogan}}</title>
+	<meta name="description" content="{{Title}} - {{Slogan}}">
 	<meta name="robots" content="noindex, nofollow">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="stylesheet" type="text/css" href="<?=$_HTML->URL?>/assets/css/frontend/search.css">
+	<link rel="stylesheet" type="text/css" href="{{BaseURL}}/assets/css/frontend/search.css">
 </head>
 <body>
-	<h1><?=$_HTML->Title?> - <?=$_HTML->Slogan?></h1>
+	<h1>{{Title}} - {{Slogan}}</h1>
 	<div class="search">
 		<input type="text" id="search-input" placeholder="Produkt, EAN, MPN, SKU..." autocomplete="off" class=""/>
 		<div class="search-buttons">
@@ -30,7 +30,7 @@
 		<div id="search-info" class="search-info"></div>
 	</div>
 	<footer class="footer">
-		© 2025 <?=$_HTML->Title?> – Made with 
+		© 2025 {{Title}} – Made with 
 		<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="red" viewBox="0 0 24 24" style="vertical-align: middle; margin: 0 4px;">
 			<path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41 0.81 4.5 2.09 C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5 c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
 		</svg>
@@ -38,6 +38,6 @@
 	</footer>
 	<div class="products" id="search-results"></div>
 	<span id="loading">Loading...</span>
-	<script type="module" src="assets/js/frontend/main.js"></script>
+	<script type="module" src="{{BaseURL}}/assets/js/frontend/main.js"></script>
 </body>
 </html>

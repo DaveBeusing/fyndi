@@ -9,11 +9,11 @@
 		gtag('config', 'G-V22GRNJ6NK');
 	</script>
 	<meta charset="UTF-8">
-	<title><?=$_HTML->Title?> - <?=$_HTML->Item->title?></title>
-	<meta name="description" content="<?=$_HTML->Title?> - <?=$_HTML->Slogan?>">
+	<title>{{Title}} - <?=$_HTML->Item->title?></title>
+	<meta name="description" content="{{Title}} - {{Slogan}}">
 	<meta name="robots" content="noindex, nofollow">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="stylesheet" type="text/css" href="<?=$_HTML->URL?>/assets/css/frontend/item.css">
+	<link rel="stylesheet" type="text/css" href="{{BaseURL}}/assets/css/frontend/item.css">
 </head>
 <body>
 	<div class="container">
@@ -25,15 +25,15 @@
 			<input type="radio" name="slide" id="img3">
 			<!-- Main images -->
 			<div class="gallery-main">
-				<img src="<?=$_HTML->URL?>/image/<?=$_HTML->Item->uid?>_1/800x600" alt="Bild 1">
-				<img src="<?=$_HTML->URL?>/image/<?=$_HTML->Item->uid?>_2/800x600" alt="Bild 2">
-				<img src="<?=$_HTML->URL?>/image/<?=$_HTML->Item->uid?>_3/800x600" alt="Bild 3">
+				<img src="{{BaseURL}}/image/<?=$_HTML->Item->uid?>_1/800x600" alt="Bild 1">
+				<img src="{{BaseURL}}/image/<?=$_HTML->Item->uid?>_2/800x600" alt="Bild 2">
+				<img src="{{BaseURL}}/image/<?=$_HTML->Item->uid?>_3/800x600" alt="Bild 3">
 			</div>
 			<!-- Thumbnail nav -->
 			<div class="gallery-thumbs">
-				<label for="img1"><img src="<?=$_HTML->URL?>/image/<?=$_HTML->Item->uid?>_1/120x90" alt="Thumb 1"></label>
-				<label for="img2"><img src="<?=$_HTML->URL?>/image/<?=$_HTML->Item->uid?>_2/120x90" alt="Thumb 2"></label>
-				<label for="img3"><img src="<?=$_HTML->URL?>/image/<?=$_HTML->Item->uid?>_3/120x90" alt="Thumb 3"></label>
+				<label for="img1"><img src="{{BaseURL}}/image/<?=$_HTML->Item->uid?>_1/120x90" alt="Thumb 1"></label>
+				<label for="img2"><img src="{{BaseURL}}/image/<?=$_HTML->Item->uid?>_2/120x90" alt="Thumb 2"></label>
+				<label for="img3"><img src="{{BaseURL}}/image/<?=$_HTML->Item->uid?>_3/120x90" alt="Thumb 3"></label>
 			</div>
 			<div clas="meta">
 				<b>General Product Safety Regulation – GPSR</b><br><br>
@@ -83,18 +83,11 @@
 		</div>
 	</div>
 	<footer class="footer">
-		© 2025 <?=$_HTML->Title?> – Made with 
+		© 2025 {{Title}} – Made with 
 		<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="red" viewBox="0 0 24 24" style="vertical-align: middle; margin: 0 4px;">
 			<path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41 0.81 4.5 2.09 C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5 c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
 		</svg>
 		in Bonn
 	</footer>
-
-<!--
-Array ( [uid] => 015SGWh1XF [status] => 1 [created] => 2025-05-29 21:29:14 [updated] => [title] => Mobilis U.FIX Uni Smartph. Mount 360 rotation arm Motorbike [description] => [manufacturer] => Mobilis 
-[mpn] => 044026 [ean] => 3700992527857 [taric] => 85299030 [unspc] => 0 [eclass] => 0 [weeenr] => 62805472 [tax] => 0 [category1] => Smartphone Zubehör [category2] => 0 [category3] => 0 [category4] => 0 [category5] => 0 
-[weight] => 0.000 [width] => 0.000 [depth] => 0.000 [height] => 0.000 [volweight] => 0.000 [iseol] => 0 [eoldate] => [minorderqty] => 1 [maxorderqty] => 0 [copyrightcharge] => 0.00 [shipping] => 1 [sku] => 520350 
-[iscondition] => 0 [availability] => 0 [stock] => 0 [stocketa] => [price] => 24.63 )
--->
 </body>
 </html>
