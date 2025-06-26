@@ -44,7 +44,7 @@ RewriteRule ^backend/dashboard$					backend.php?view=dashboard [QSA,L,NE]
 RewriteRule ^backend/user$						backend.php?view=user [QSA,L,NE]
 RewriteRule ^backend/catalog$					backend.php?view=catalog [QSA,L,NE]
 RewriteRule ^backend/verify/(.+)$				backend.php?view=verify&token=$1 [QSA,L,NE]
-RewriteRule ^backend/reset-password				backend.php?view=reset-password&token= [QSA,L,NE]
+RewriteRule ^backend/reset-password				backend.php?view=reset-password&token=false [QSA,L,NE]
 RewriteRule ^backend/reset-password/(.+)$		backend.php?view=reset-password&token=$1 [QSA,L,NE]
 
 # Frontend-Routen
