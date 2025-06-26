@@ -97,6 +97,17 @@ switch( filter_input( INPUT_GET, 'view', FILTER_SANITIZE_SPECIAL_CHARS ) ):
 		);
 	break;
 
+	case 'user':
+		$iam->secure( [ 'admin' ] );
+		TemplateEngine::render(
+			Config::get()->html->template->backend.'user-manager.html',
+			[
+				'Title' => Config::get()->app->name,
+				'BaseURL' => Config::get()->app->url
+			]
+		);
+	break;
+
 
 	default:
 		TemplateEngine::render(

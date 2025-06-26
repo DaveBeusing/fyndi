@@ -6,16 +6,16 @@
 	<meta name="description" content="User Manager">
 	<meta name="robots" content="noindex, nofollow">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="stylesheet" type="text/css" href="<?=$_HTML->URL?>/assets/css/backend/user-manager.css">
+	<link rel="stylesheet" type="text/css" href="{{BaseURL}}/assets/css/backend/user-manager.css">
 </head>
 <body>
 	<nav>
 		<div>
-			<a href="<?=$_HTML->URL?>/backend/dashboard">Dashboard</a>
-			<a href="<?=$_HTML->URL?>/backend/catalog">Catalog</a>
-			<a href="<?=$_HTML->URL?>/backend/user">User</a>
+			<a href="{{BaseURL}}/backend/dashboard">Dashboard</a>
+			<a href="{{BaseURL}}/backend/catalog">Catalog</a>
+			<a href="{{BaseURL}}/backend/user">User</a>
 		</div>
-		<a class="logout" href="<?=$_HTML->URL?>/backend/logout">Logout</a>
+		<a class="logout" href="{{BaseURL}}/backend/logout">Logout</a>
 	</nav>
 	<main>
 		<form class="user-form" id="createUserForm">
@@ -55,6 +55,6 @@
 		</div>
 	</main>
 	<span id="loading">Loading...</span>
-	<script type="module" src="<?=$_HTML->URL?>/assets/js/backend/main.js"></script>
+	<script type="module" src="{{BaseURL}}/assets/js/backend/main.js"></script>
 </body>
 </html>

@@ -143,17 +143,6 @@ switch( filter_input( INPUT_GET, 'view', FILTER_SANITIZE_SPECIAL_CHARS ) ):
 		);
 	break;
 
-	case 'user':
-		$iam->secure( [ 'admin' ] );
-		Template::view(
-			Config::get()->html->template->backend.'user-manager.html',
-			[
-				'Title' => Config::get()->app->name,
-				'URL' => Config::get()->app->url
-			]
-		);
-	break;
-
 	case 'debug':
 		$iam->secure( [ 'Admin', 'Editor' ] );
 		$uid = Utils::generateUID();
