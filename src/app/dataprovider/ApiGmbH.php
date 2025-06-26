@@ -26,7 +26,7 @@
 namespace app\dataprovider;
 
 use app\config\Config;
-use app\utils\Utils;
+use app\catalog\Catalog;
 use app\utils\ImportLogger;
 use app\dataprovider\Crawler;
 use app\database\MySQLPDO;
@@ -161,7 +161,7 @@ class ApiGmbH {
 					:price
 				 	) '
 				);
-				$uid = Utils::generateUID();
+				$uid = Catalog::generateUID();
 				$isTrue = 1;
 				$isFalse = 0;
 				$updated = null;
@@ -247,7 +247,7 @@ class ApiGmbH {
 				$stmt = $sql->prepare( 'INSERT INTO gpsr ( uid, status, brand, company, street, country, city, homepage, support_url, support_email, support_hotline, note, created, updated ) 
 				VALUES ( :uid, :status, :brand, :company, :street, :country, :city, :homepage, :support_url, :support_email, :support_hotline, :note, :created, :updated )' 
 				);
-				$uid = Utils::generateUID();
+				$uid = Catalog::generateUID();
 				$isTrue = 1;
 				$isFalse = 0;
 				$updated = null;

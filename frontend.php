@@ -30,10 +30,11 @@ require_once 'src/autoload.php';
  * Includes
  */
 use app\config\Config;
-use app\utils\Utils;
 use app\catalog\Catalog;
 use app\template\TemplateEngine;
-
+/**
+ * Main switching
+ */
 switch( filter_input( INPUT_GET, 'view', FILTER_SANITIZE_SPECIAL_CHARS ) ):
 
 	case 'image':
@@ -63,8 +64,8 @@ switch( filter_input( INPUT_GET, 'view', FILTER_SANITIZE_SPECIAL_CHARS ) ):
 
 	case 'debug':
 		$iam->secure( [ 'Admin', 'Editor' ] );
-		$uid = Utils::generateUID();
-		$isValid = Utils::validateUID( $uid );
+		$uid = Catalog::generateUID();
+		$isValid = Catalog::validateUID( $uid );
 		print "UID: $uid / isValid: $isValid <br><br>";
 		print "Generated Password: <br> Hash:" .password_hash( '', PASSWORD_DEFAULT ) . "<br>";
 		print_r( $_SESSION );
