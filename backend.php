@@ -87,7 +87,7 @@ switch( filter_input( INPUT_GET, 'view', FILTER_SANITIZE_SPECIAL_CHARS ) ):
 	break;
 
 	case 'dashboard':
-		$iam->secure( [ 'admin' ] );
+		$iam->secure( [ 'admin', 'editor', 'user' ] );
 		TemplateEngine::render(
 			Config::get()->html->template->backend.'dashboard.html',
 			[
@@ -101,6 +101,17 @@ switch( filter_input( INPUT_GET, 'view', FILTER_SANITIZE_SPECIAL_CHARS ) ):
 		$iam->secure( [ 'admin' ] );
 		TemplateEngine::render(
 			Config::get()->html->template->backend.'user-manager.html',
+			[
+				'Title' => Config::get()->app->name,
+				'BaseURL' => Config::get()->app->url
+			]
+		);
+	break;
+
+	case 'catalog':
+		$iam->secure( [ 'admin' ] );
+		TemplateEngine::render(
+			Config::get()->html->template->backend.'catalog-manager.html',
 			[
 				'Title' => Config::get()->app->name,
 				'BaseURL' => Config::get()->app->url
