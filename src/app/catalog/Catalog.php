@@ -218,7 +218,6 @@ class Catalog {
 		$stats[ 'unavailable'] = $pdo->query("SELECT COUNT(*) FROM catalog WHERE availability = 0")->fetchColumn();
 		$stats[ 'virtual'] = $pdo->query("SELECT COUNT(*) FROM catalog WHERE category1 = 'Garantie virtuell'")->fetchColumn();
 		$stats[ 'avg_price'] = $pdo->query("SELECT ROUND(AVG(price),2) FROM catalog WHERE price > 0")->fetchColumn();
-		//$stats[ 'total_stock_value'] = $pdo->query( "SELECT ROUND( SUM( price * stock ), 2 ) FROM catalog WHERE price > 0" )->fetchColumn();
 		$stats[ 'total_stock_value'] = $pdo->query( "SELECT ROUND( SUM( price * stock ), 2 ) FROM catalog WHERE category1 != 'Garantie virtuell' AND price > 0" )->fetchColumn();
 		$stats[ 'created_7d'] = $pdo->query("SELECT COUNT(*) FROM catalog WHERE created >= NOW() - INTERVAL 7 DAY")->fetchColumn();
 		$stats[ 'avg_weight'] = $pdo->query("SELECT ROUND(AVG(weight),3) FROM catalog WHERE weight > 0")->fetchColumn();
@@ -259,6 +258,34 @@ class Catalog {
 		$stats['availability_dist'] = $stmt->fetchAll( \PDO::FETCH_ASSOC );
 		print json_encode( $stats );
 		exit;
+	}
+
+	public static function generateUID() : string {
+		$chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+		$len = 10;
+		$uid = $chars[ random_int( 0, strlen( $chars ) - 1) ];
+		while( strlen( $uid ) < $len ){
+			$nextChar = $chars[ random_int( 0, strlen( $chars ) - 1 ) ];
+			if( $nextChar !== $uid[ strlen( $uid ) - 1 ] ){
+				$uid .= $nextChar;
+			}
+		}
+		return $uid;
+	}
+
+	public static function validateUID( $uid ) : bool {
+		if( strlen( $uid ) !== 10 ){
+			return false;
+		}
+		if( !preg_match( '/^[a-zA-Z0-9]+$/', $uid ) ){
+			return false;
+		}
+		for( $i = 1; $i < strlen( $uid ); $i++ ){
+			if( $uid[$i] === $uid[$i - 1] ){
+				return false;
+			}
+		}
+		return true;
 	}
 
 }
