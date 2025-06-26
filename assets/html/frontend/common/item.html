@@ -9,7 +9,7 @@
 		gtag('config', 'G-V22GRNJ6NK');
 	</script>
 	<meta charset="UTF-8">
-	<title>{{Title}} - <?=$_HTML->Item->title?></title>
+	<title>{{Title}} - {{item.title}}</title>
 	<meta name="description" content="{{Title}} - {{Slogan}}">
 	<meta name="robots" content="noindex, nofollow">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -25,59 +25,59 @@
 			<input type="radio" name="slide" id="img3">
 			<!-- Main images -->
 			<div class="gallery-main">
-				<img src="{{BaseURL}}/image/<?=$_HTML->Item->uid?>_1/800x600" alt="Bild 1">
-				<img src="{{BaseURL}}/image/<?=$_HTML->Item->uid?>_2/800x600" alt="Bild 2">
-				<img src="{{BaseURL}}/image/<?=$_HTML->Item->uid?>_3/800x600" alt="Bild 3">
+				<img src="{{BaseURL}}/image/{{item.uid}}_1/800x600" alt="Bild 1">
+				<img src="{{BaseURL}}/image/{{item.uid}}_2/800x600" alt="Bild 2">
+				<img src="{{BaseURL}}/image/{{item.uid}}_3/800x600" alt="Bild 3">
 			</div>
 			<!-- Thumbnail nav -->
 			<div class="gallery-thumbs">
-				<label for="img1"><img src="{{BaseURL}}/image/<?=$_HTML->Item->uid?>_1/120x90" alt="Thumb 1"></label>
-				<label for="img2"><img src="{{BaseURL}}/image/<?=$_HTML->Item->uid?>_2/120x90" alt="Thumb 2"></label>
-				<label for="img3"><img src="{{BaseURL}}/image/<?=$_HTML->Item->uid?>_3/120x90" alt="Thumb 3"></label>
+				<label for="img1"><img src="{{BaseURL}}/image/{{item.uid}}_1/120x90" alt="Thumb 1"></label>
+				<label for="img2"><img src="{{BaseURL}}/image/{{item.uid}}_2/120x90" alt="Thumb 2"></label>
+				<label for="img3"><img src="{{BaseURL}}/image/{{item.uid}}_3/120x90" alt="Thumb 3"></label>
 			</div>
 			<div clas="meta">
 				<b>General Product Safety Regulation – GPSR</b><br><br>
-				<?=$_HTML->Item->gpsr->brand?><br>
-				<?=$_HTML->Item->gpsr->company?><br>
-				<?=$_HTML->Item->gpsr->country?> <?=$_HTML->Item->gpsr->city?> <?=$_HTML->Item->gpsr->street?><br>
-				<a href="<?=$_HTML->Item->gpsr->homepage?>" target="_blank"><?=$_HTML->Item->gpsr->homepage?></a><br>
-				<a href="<?=$_HTML->Item->gpsr->support_url?>" target="_blank"><?=$_HTML->Item->gpsr->support_url?></a><br>
-				<?=$_HTML->Item->gpsr->support_email?><br>
-				<?=$_HTML->Item->gpsr->support_hotline?>
+				{{item.gpsr.brand}}<br>
+				{{item.gpsr.company}}<br>
+				{{item.gpsr.country}} {{item.gpsr.city}} {{item.gpsr.street}}<br>
+				<a href="{{item.gpsr.homepage}}" target="_blank">{{item.gpsr.homepage}}</a><br>
+				<a href="{{item.gpsr.support_url}}" target="_blank">{{item.gpsr.support_url}}</a><br>
+				{{item.gpsr.support_email}}<br>
+				{{item.gpsr.support_hotline}}
 			</div>
 		</div>
 		<div class="info">
-			<h1><?=$_HTML->Item->title?></h1>
+			<h1>{{item.title}}</h1>
 			<div class="meta">
-				Hersteller: <strong><?=$_HTML->Item->manufacturer?></strong><br>
-				Kategorie: <a href="#"><?=$_HTML->Item->category1?></a> &gt; <a href="#"><?=$_HTML->Item->category2?></a><br>
-				EAN: <?=$_HTML->Item->ean?><br>
-				MPN: <?=$_HTML->Item->mpn?><br>
-				SKU: <?=$_HTML->Item->sku?><br>
-				TARIC: <?=$_HTML->Item->taric?><br>
-				WEEE: <?=$_HTML->Item->sku?><br>
-				UID: <?=$_HTML->Item->uid?><br>
-				Zustand: <?=$_HTML->Item->iscondition?><br>
+				Hersteller: <strong>{{item.manufacturer}}</strong><br>
+				Kategorie: <a href="#">{{item.category1}}</a> &gt; <a href="#">{{item.category2}}</a><br>
+				EAN: {{item.ean}}<br>
+				MPN: {{item.mpn}}<br>
+				SKU: {{item.sku}}<br>
+				TARIC: {{item.taric}}<br>
+				WEEE: {{item.weee}}<br>
+				UID: {{item.uid}}<br>
+				Zustand: {{item.iscondition}}<br>
 				<br>
-				Bestand: <strong><?=$_HTML->Item->stock?></strong> [ <?=$_HTML->Item->availability?> <?=$_HTML->Item->stocketa?>]
+				Bestand: <strong>{{item.stock}}</strong> [ {{item.availability}} {{item.stocketa}}]
 			</div>
 			<div class="price-box">
-				<div class="net-price" itemprop="net-price" data-cents="<?=(explode('.', $_HTML->Item->price)[1])?>" content="<?=$_HTML->Item->price?>"><span class="currency">€</span> <?=(explode('.', $_HTML->Item->price)[0])?>,</div>
+				<div class="net-price" itemprop="net-price" data-cents="{{item.cents}}" content="{{item.price}}"><span class="currency">€</span> {{item.euros}},</div>
 				<div class="label">zzgl. MwSt. / Stück</div>
-				<div class="gross-price"><?=(str_replace('.',',',round($_HTML->Item->price*1.19, 2)))?> € Brutto</div>
+				<div class="gross-price">{{item.grossprice}} € Brutto</div>
 			</div>
-			<div class="description"><?=$_HTML->Item->description?></div>
+			<div class="description">{{item.description}}</div>
 			<a href="#" class="btn">🛒 In den Warenkorb</a>
 			<div class="meta">
 				<br>
-				Gewicht: <?=$_HTML->Item->weight?>kg<br>
-				Breite: <?=$_HTML->Item->width?>m<br>
-				Tiefe: <?=$_HTML->Item->depth?>m<br>
-				Höhe: <?=$_HTML->Item->height?>m<br>
-				Volumengewicht: <?=$_HTML->Item->volweight?><br>
-				Versandart: <?=$_HTML->Item->shipping?><br>
+				Gewicht: {{item.weight}}kg<br>
+				Breite: {{item.width}}m<br>
+				Tiefe: {{item.depth}}m<br>
+				Höhe: {{item.height}}m<br>
+				Volumengewicht: {{item.volweight}}<br>
+				Versandart: {{item.shipping}}<br>
 				<br>
-				Indexed: <?=$_HTML->Item->created?>
+				Indexed: {{item.created}}
 			</div>
 		</div>
 		</div>

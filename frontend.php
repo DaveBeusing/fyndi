@@ -45,19 +45,22 @@ switch( filter_input( INPUT_GET, 'view', FILTER_SANITIZE_SPECIAL_CHARS ) ):
 
 	case 'item':
 		$uid = filter_input( INPUT_GET, 'uid', FILTER_SANITIZE_SPECIAL_CHARS );
-		if( !$uid || !Utils::validateUID( $uid ) ){
+		if( !$uid || !Catalog::validateUID( $uid ) ){
 			header( 'HTTP/1.0 404 Not Found' );
 			header( 'Location: '. Config::get()->app->url );
 			exit;
 		}
 		$item = Catalog::getItemDetails( $uid );
+		$item['euros'] = explode( '.', $item['price'] )[0];
+		$item['cents'] = explode( '.', $item['price'] )[1];
+		$item['grossprice'] = str_replace( '.', ',', round( $item['price']*1.19, 2 ) );
 		TemplateEngine::render(
 			Config::get()->html->template->path.'item.html',
 			[
 				'Title' => Config::get()->app->name,
 				'BaseURL' => Config::get()->app->url,
 				'Slogan' => Config::get()->app->slogan,
-				'Item' => (object) $item
+				'item' => (object) $item
 			]
 		);
 	break;
