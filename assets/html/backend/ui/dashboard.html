@@ -6,23 +6,33 @@
 	<meta name="description" content="Dashboard">
 	<meta name="robots" content="noindex, nofollow">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="stylesheet" type="text/css" href="<?=$_HTML->URL?>/assets/css/backend/dashboard.css">
+	<link rel="stylesheet" type="text/css" href="{{BaseURL}}/assets/css/backend/dashboard.css">
 	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 <body>
 	<nav>
 		<div>
-			<a href="<?=$_HTML->URL?>/backend/dashboard">Dashboard</a>
-			<a href="<?=$_HTML->URL?>/backend/catalog">Catalog</a>
-			<a href="<?=$_HTML->URL?>/backend/user">User</a>
+			<a href="{{BaseURL}}/backend/dashboard">Dashboard</a>
+			<a href="{{BaseURL}}/backend/catalog">Catalog</a>
+			<a href="{{BaseURL}}/backend/user">User</a>
 		</div>
-		<a class="logout" href="<?=$_HTML->URL?>/backend/logout">Logout</a>
+		<a class="logout" href="{{BaseURL}}/backend/logout">Logout</a>
 	</nav>
 	<main>
 		<div class="dashboard-metrics">
 			<h2>Catalog Metrics</h2>
-			<div id="catalog-metrics">load Data...</div>
+			<div id="catalog-metrics">
+				<div class="loader">
+					<svg width="200" height="50">
+						<circle cx="20" cy="25" r="5" class="dot dot1"/>
+						<circle cx="40" cy="25" r="5" class="dot dot2"/>
+						<circle cx="60" cy="25" r="5" class="dot dot3"/>
+						<circle cx="80" cy="25" r="5" class="dot dot4"/>
+						<circle cx="100" cy="25" r="5" class="dot dot5"/>
+					</svg>
+				</div>
+			</div>
 			<h3>Charts</h3>
 			<div id="chart-container">
 				<canvas id="categoryChart" width="400px" height="200px"></canvas>
@@ -31,6 +41,6 @@
 		</div>
 	</main>
 	<span id="loading">Loading...</span>
-	<script type="module" src="<?=$_HTML->URL?>/assets/js/backend/main.js"></script>
+	<script type="module" src="{{BaseURL}}/assets/js/backend/main.js"></script>
 </body>
 </html>

@@ -132,17 +132,6 @@ switch( filter_input( INPUT_GET, 'view', FILTER_SANITIZE_SPECIAL_CHARS ) ):
 		exit;
 	break;
 
-	case 'dashboard':
-		$iam->secure( [ 'admin' ] );
-		Template::view(
-			Config::get()->html->template->backend.'dashboard.html',
-			[
-				'Title' => Config::get()->app->name,
-				'URL' => Config::get()->app->url
-			]
-		);
-	break;
-
 	case 'catalog':
 		$iam->secure( [ 'admin' ] );
 		Template::view(

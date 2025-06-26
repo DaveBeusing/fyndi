@@ -38,7 +38,7 @@ RewriteRule ^api/					index.php?view=api [QSA,L,NE]
 # Backend
 RewriteRule ^backend/login$					backend.php?view=login [QSA,L,NE]
 RewriteRule ^backend/logout$				backend.php?view=logout [QSA,L,NE]
-RewriteRule ^backend/dashboard$				index.php?view=dashboard [QSA,L,NE]
+RewriteRule ^backend/dashboard$				backend.php?view=dashboard [QSA,L,NE]
 RewriteRule ^backend/user$					index.php?view=user [QSA,L,NE]
 RewriteRule ^backend/catalog$				index.php?view=catalog [QSA,L,NE]
 RewriteRule ^backend/verify/(.+)$			backend.php?view=verify&token=$1 [QSA,L,NE]

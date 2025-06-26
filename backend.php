@@ -74,7 +74,7 @@ switch( filter_input( INPUT_GET, 'view', FILTER_SANITIZE_SPECIAL_CHARS ) ):
 				$iam->requestPasswordReset( $email );
 			}
 		}
-		else{
+		else {
 			TemplateEngine::render(
 				Config::get()->html->template->backend.'reset-password.html',
 				[
@@ -85,6 +85,18 @@ switch( filter_input( INPUT_GET, 'view', FILTER_SANITIZE_SPECIAL_CHARS ) ):
 			);
 		}
 	break;
+
+	case 'dashboard':
+		$iam->secure( [ 'admin' ] );
+		TemplateEngine::render(
+			Config::get()->html->template->backend.'dashboard.html',
+			[
+				'Title' => Config::get()->app->name,
+				'BaseURL' => Config::get()->app->url
+			]
+		);
+	break;
+
 
 	default:
 		TemplateEngine::render(
